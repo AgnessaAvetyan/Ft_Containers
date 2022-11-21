@@ -48,3 +48,18 @@
 
 // std::enable_if
     https://cplusplus.com/reference/type_traits/enable_if/?kw=enable_if
+
+// std::is_integral
+    https://cplusplus.com/reference/type_traits/is_integral/?kw=is_integral
+
+// std::equal
+    https://cplusplus.com/reference/algorithm/equal/?kw=equal
+
+// std::lexicographical_compare
+    https://cplusplus.com/reference/algorithm/lexicographical_compare/?kw=lexicographical_compare
+
+// std::pair
+    https://cplusplus.com/reference/utility/pair/?kw=pair
+
+    //std::pair::pair
+    https://cplusplus.com/reference/utility/pair/pair/
