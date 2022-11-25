@@ -70,7 +70,6 @@ namespace ft
         ft::swap(x.first, y.first);
         ft::swap(x.second, y.second); 
     }
-
 } // namespace ft
 
 #endif // PAIR_HPP

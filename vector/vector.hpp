@@ -4,11 +4,13 @@
 
 namespace ft
 {
-    template < class T, class Alloc = allocator<T> >
+    template < class T, class Alloc = std::allocator<T> >
     class vector
     {
     template <typename It> RandomAccessIterator
-        {};
+    {
+
+    };
 
     private:
         typedef typename It::iterator_traits<It>::value_type    value_type;
@@ -46,13 +48,19 @@ namespace ft
         {
             if (first > last)
                 throw std::length_error("Error vector's iterator!");
-            for (InputIterator it = first; it < last; ++it)
-            {
-                
-            }
+            _s = last - first;
+            _c = _s;
+            _p = _a.allocate(_c);
+            for(difference_type i = 0; i < static_cast<difference_type>(_s); ++i)
+                _a.construct(_p + 1, *(_p + 1));
         }
-        vector (const vector& x);
-            
+        vector (const vector& x) 
+        { *this = x; }     
+        ~vector()
+        {
+            for(int i = 0; i < _s; ++i)
+                de
+        }      
     };
 }
 
