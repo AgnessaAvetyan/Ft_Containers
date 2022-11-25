@@ -1,6 +1,8 @@
 #ifndef UTILITIES_HPP
 #define UTILITIES_HPP
 
+#include <iostream>
+
 #include "enable_if.hpp"
 #include "equal.hpp"
 #include "lexicographical_compare.hpp"

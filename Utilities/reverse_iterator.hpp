@@ -48,7 +48,7 @@ namespace ft
         reverse_iterator  operator++(int)
         {
             reverse_iterator temp = *this;
-            ++(*this);
+            --(*this);
             return temp;
         }
 
@@ -72,7 +72,7 @@ namespace ft
         reverse_iterator  operator--(int)
         {
             reverse_iterator temp = *this;
-            --(*this);
+            ++(*this);
             return temp;
         }
 
