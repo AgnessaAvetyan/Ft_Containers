@@ -7,6 +7,17 @@
         "sstream": "cpp",
         "string": "cpp",
         "unordered_map": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "__bit_reference": "cpp",
+        "array": "cpp",
+        "complex": "cpp",
+        "functional": "cpp",
+        "iterator": "cpp",
+        "initializer_list": "cpp",
+        "memory": "cpp",
+        "optional": "cpp",
+        "string_view": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp"
     }
 }
