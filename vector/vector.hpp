@@ -10,7 +10,7 @@ namespace ft
     template <typename It>
     class RandomAccessIterator
     {
-
+        return ;
     };
 
     private:
