@@ -10,6 +10,7 @@
 #include "iterator_traits.hpp"
 #include "make_pair.hpp"
 #include "pair.hpp"
+#include "remove_const.hpp"
 #include "reverse_iterator.hpp"
 
 #endif // UTILITIES_HPP

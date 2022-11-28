@@ -58,3 +58,15 @@
 
 //  std::vector::insert
     https://cplusplus.com/reference/vector/vector/insert/
+
+//  std::random_access_iterator
+    https://en.cppreference.com/w/cpp/iterator/random_access_iterator
+
+    //  std::random_access_iterator_tag
+        https://cplusplus.com/reference/iterator/RandomAccessIterator/?kw=Random+access+iterator
+
+//  std::vector::erase
+    https://cplusplus.com/reference/vector/vector/erase/
+    
+    //  std::distance
+        https://cplusplus.com/reference/iterator/distance/?kw=distance
