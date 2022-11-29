@@ -2,7 +2,7 @@
 #define UTILITIES_HPP
 
 #include <iostream>
-
+#include <iterator>
 #include "enable_if.hpp"
 #include "equal.hpp"
 #include "lexicographical_compare.hpp"

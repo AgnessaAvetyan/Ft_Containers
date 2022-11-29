@@ -9,7 +9,7 @@ namespace ft
     class iterator_traits
     {
     public:
-        typedef typename Iterator::deffierent_type      different_type;
+        typedef typename Iterator::different_type       different_type;
         typedef typename Iterator::value_type           value_type;
         typedef typename Iterator::pointer              pointer;
         typedef typename Iterator::reference            reference;
