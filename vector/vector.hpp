@@ -31,6 +31,28 @@ namespace ft
                 _p = &(*p);
                 return *this;
             }
+            RandomAccessIterator& operator++()
+            {
+                ++_p;
+                return *this;
+            }
+            RandomAccessIterator& operator--()
+            {
+                --_p;
+                return *this;
+            }
+            RandomAccessIterator operator++(int)
+            {
+                RandomAccessIterator temp(*this);
+                ++_p;
+                return *this;
+            }
+            RandomAccessIterator operator--(int)
+            {
+                RandomAccessIterator temp(*this);
+                --_p;
+                return *this;
+            }
             RandomAccessIterator operator+(const difference_type& it) const { return _p + it; }
             RandomAccessIterator operator-(const difference_type& it) const { return _p - it; }
             RandomAccessIterator& operator+=(const difference_type& it) const
@@ -63,45 +85,45 @@ namespace ft
         { return a - b; }
 
         template<typename A, typename B>
-        friend vector::template RandomAccessIterator<A>
-        operator+(const typename vector::template RandomAccessIterator<A>::difference_type& a,
-                    const typename vector::template RandomAccessIterator<B>::difference_type& b)
+        friend typename vector::template RandomAccessIterator<A>::difference_type
+        operator+(const vector::template RandomAccessIterator<A>& a,
+                    const vector::template RandomAccessIterator<B>& b)
         { return &(*a) + &(*b); }
 
         template<typename A, typename B>
-        friend vector::template RandomAccessIterator<A>
-        operator-(const typename vector::template RandomAccessIterator<A>::difference_type& a,
-                    const typename vector::template RandomAccessIterator<B>::difference_type& b)
+        friend typename vector::template RandomAccessIterator<A>::difference_type
+        operator-(const vector::template RandomAccessIterator<A>& a,
+                    const vector::template RandomAccessIterator<B>& b)
         { return &(*a) - &(*b); }
 
         template<typename A, typename B>
-        friend bool operator==(const typename vector::template RandomAccessIterator<A>::difference_type& a,
-                    const typename vector::template RandomAccessIterator<B>::difference_type& b)
+        friend bool operator==(const vector::template RandomAccessIterator<A>& a,
+                    const vector::template RandomAccessIterator<B>& b)
         { return &(*a) == &(*b); }
 
         template<typename A, typename B>
-        friend bool operator!=(const typename vector::template RandomAccessIterator<A>::difference_type& a,
-                    const typename vector::template RandomAccessIterator<B>::difference_type& b)
+        friend bool operator!=(const typename vector::template RandomAccessIterator<A>& a,
+                    const typename vector::template RandomAccessIterator<B>& b)
         { return &(*a) != &(*b); }
         
         template<typename A, typename B>
-        friend bool operator>(const typename vector::template RandomAccessIterator<A>::difference_type& a,
-                    const typename vector::template RandomAccessIterator<B>::difference_type& b)
+        friend bool operator>(const typename vector::template RandomAccessIterator<A>& a,
+                    const typename vector::template RandomAccessIterator<B>& b)
         { return &(*a) > &(*b); }
         
         template<typename A, typename B>
-        friend bool operator<(const typename vector::template RandomAccessIterator<A>::difference_type& a,
-                    const typename vector::template RandomAccessIterator<B>::difference_type& b)
+        friend bool operator<(const typename vector::template RandomAccessIterator<A>& a,
+                    const typename vector::template RandomAccessIterator<B>& b)
         { return &(*a) < &(*b); }
         
         template<typename A, typename B>
-        friend bool operator>=(const typename vector::template RandomAccessIterator<A>::difference_type& a,
-                    const typename vector::template RandomAccessIterator<B>::difference_type& b)
+        friend bool operator>=(const typename vector::template RandomAccessIterator<A>& a,
+                    const typename vector::template RandomAccessIterator<B>& b)
         { return &(*a) >= &(*b); }
         
         template<typename A, typename B>
-        friend bool operator<=(const typename vector::template RandomAccessIterator<A>::difference_type& a,
-                    const typename vector::template RandomAccessIterator<B>::difference_type& b)
+        friend bool operator<=(const typename vector::template RandomAccessIterator<A>& a,
+                    const typename vector::template RandomAccessIterator<B>& b)
         { return &(*a) <= &(*b); }
     
     public:
@@ -181,13 +203,15 @@ namespace ft
         bool empty() const { return _s == 0; }
 
         iterator begin() { return iterator(_p); }
-        const_iterator begin() const { return const_iterator(_p); }
         iterator end() { return iterator(_p + _s); }
+        const_iterator begin() const { return const_iterator(_p); }
         const_iterator end() const { return const_iterator(_p + _s); }
-        reverse_iterator rbegin() { return reverse_iterator(_p + _s); }
-        const_reverse_iterator rbegin() const { return const_reverse_iterator(_p + _s); }
-        reverse_iterator rend() { return reverse_iterator(_p); }
-        const_reverse_iterator rend() const { return const_reverse_iterator(_p); }
+
+        reverse_iterator rbegin() { return reverse_iterator(end()); }
+        reverse_iterator rend() { return reverse_iterator(begin()); }
+        const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
+        const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
+
         const_iterator cbegin() const { return const_iterator(_p); }
         const_iterator cend() const { return const_iterator(_p + _s); }
         const_reverse_iterator crbegin() const { return const_reverse_iterator(_p + _s); }

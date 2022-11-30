@@ -1,5 +1,6 @@
 #include "vector/vector.hpp"
 #include <iomanip>
+#include <vector>
 
 int main()
 {
@@ -28,16 +29,17 @@ int main()
         std::cout << "vec.empty(): " << vec.empty() << std::endl;
         std::cout << "vec.front(): " << vec.front() << " (" << *(vec.begin()) << ")" << std::endl;
         std::cout << "vec.back(): " << vec.back() << " (" << *(vec.end() - 1) << ")" << std::endl;    
+        ft::vector<int>::reverse_iterator b_it = vec.rbegin();
+        ft::vector<int>::reverse_iterator e_it = vec.rend();
+        int i = 0;
+        while (b_it != e_it)
+        {
+            std::cout << "reverse_vector[" << i << "]= " << *b_it << " " << std::endl;
+            b_it++;
+            i++;
+        }
         std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
     }
-
-    // typename ft::vector<int>::reverse_iterator b_it = vec.rbegin();
-    // typename ft::vector<int>::reverse_iterator e_it = vec.rend();
-    // while (b_it != e_it)
-    // {
-    //     std::cout << *b_it << " ";
-    //     b_it++;
-    // }
     {
         ft::vector<int> empty_vec;
         std::cout << std::endl << "\e[1m" << "*-----------------reserve-------------------*" << "\e[0m" <<std::endl;
@@ -48,7 +50,6 @@ int main()
         empty_vec.reserve(500);
         std::cout << "Empty Vector reverse 500: " << empty_vec.capacity() << std::endl;
         std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
-
     }
 
     {
@@ -62,24 +63,24 @@ int main()
             std::cout << "vector[" << i << "]= " << vec[i] << " == vector.at("
                     << i << ")= " << vec.at(i) << std::endl;
         ft::vector<int> vec2(vec);
-        vec.clear();
+        // vec.clear();
         std::cout << "vec.size(): " << vec.size() << std::endl;
         std::cout << "vec.capacity(): " << vec.capacity() << std::endl;
         for (size_t i = 0; i < vec2.size(); i++)
             std::cout << "copy_vector[" << i << "] = " << vec2[i] << " == copy_vector.at("
                     << i << ") = " << vec2.at(i) << std::endl;
-        // typename ft::vector<int>::reverse_iterator rbit = vec.rbegin();
-        // typename ft::vector<int>::reverse_iterator reit = vec.rend();
-        // int i = 1;
-        // while (rbit != reit)
-        //     std::cout << i++ << "->" << *rbit++ << std::endl;
-        // typename ft::vector<int>::iterator b_it;
-        // typename ft::vector<int>::iterator e_it;
-        // b_it = vec.begin();
-        // e_it = vec.end();
-        // while (b_it != e_it)
-        //     std::cout << *b_it++ << ",";
-        std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
+        ft::vector<int>::reverse_iterator rbit = vec.rbegin();
+        ft::vector<int>::reverse_iterator reit = vec.rend();
+        int i = 1;
+        while (rbit != reit)
+            std::cout << i++ << "->" << *rbit++ << std::endl;
+        ft::vector<int>::iterator b_it;
+        ft::vector<int>::iterator e_it;
+        b_it = vec.begin();
+        e_it = vec.end();
+        while (b_it != e_it)
+            std::cout << *b_it++ << ",";
+        std::cout << std::endl << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
     }
 
     {
@@ -97,11 +98,21 @@ int main()
         vec1.push_back(205);
         vec1.push_back(305);
         vec1.push_back(405);
-        // std::cout << "Erase: " << *vec.erase(vec.end()) << std::endl;
-        vec.swap(vec1);
+
+        // std::vector<int> origin_vec;
+        // origin_vec.push_back(5);
+        // origin_vec.push_back(15);
+        // origin_vec.push_back(25);
+        // origin_vec.push_back(35);
+        // origin_vec.push_back(45);
+        // std::cout << "origin Erase: " << *origin_vec.erase(origin_vec.end() - 1) << std::endl;
+        // for (size_t i = 0; i < origin_vec.size(); i++)
+        //     std::cout << "origin_vector[" << i << "]= " << origin_vec[i] << std::endl;
+        std::cout << "Erase: " << *vec.erase(vec.end() - 1) << std::endl;
         for (size_t i = 0; i < vec.size(); i++)
-            std::cout << "vector[" << i << "]= " << vec[i] << " == vector.at("
-                    << i << ")= " << vec1.at(i) << std::endl;
+            std::cout << "vector[" << i << "]= " << vec[i] << std::endl;
+        
+        vec.swap(vec1);
         vec.resize(3, 100);
         for (size_t i = 0; i < vec.size(); i++)
             std::cout << "resize vector[" << i << "]= " << vec[i] << std::endl;

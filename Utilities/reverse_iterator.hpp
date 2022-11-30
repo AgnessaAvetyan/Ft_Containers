@@ -41,6 +41,7 @@ namespace ft
         // The pre-increment version
         reverse_iterator& operator++()
         {
+            // std::cout << " i am here" << std::endl;
             --iterType;
             return *this;
         }
@@ -48,8 +49,9 @@ namespace ft
         // The post-increment version
         reverse_iterator  operator++(int)
         {
+            // std::cout << " i am here tœ" << std::endl;
             reverse_iterator temp = *this;
-            --(*this);
+            ++(*this);
             return temp;
         }
 
@@ -73,7 +75,7 @@ namespace ft
         reverse_iterator  operator--(int)
         {
             reverse_iterator temp = *this;
-            ++(*this);
+            --(*this);
             return temp;
         }
 
