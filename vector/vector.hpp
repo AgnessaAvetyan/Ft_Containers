@@ -12,7 +12,7 @@ namespace ft
         {
 
         public:
-            typedef typename iterator_traits<It*>::different_type   different_type;
+            typedef typename iterator_traits<It*>::difference_type  difference_type;
             typedef typename iterator_traits<It*>::value_type       value_type;
             typedef typename iterator_traits<It*>::reference        reference;
             typedef typename iterator_traits<It*>::pointer          pointer;
@@ -31,78 +31,77 @@ namespace ft
                 _p = &(*p);
                 return *this;
             }
-            RandomAccessIterator operator+(const different_type& it) const { return _p + it; }
-            RandomAccessIterator operator-(const different_type& it) const { return _p - it; }
-            RandomAccessIterator& operator+=(const different_type& it) const
+            RandomAccessIterator operator+(const difference_type& it) const { return _p + it; }
+            RandomAccessIterator operator-(const difference_type& it) const { return _p - it; }
+            RandomAccessIterator& operator+=(const difference_type& it) const
             {
                 _p += it;
                 return *this;
             }
-            RandomAccessIterator& operator-=(const different_type& it) const
+            RandomAccessIterator& operator-=(const difference_type& it) const
             {
                 _p -= it;
                 return *this;
             }
             pointer operator->() const { return _p; }
             reference operator*() const { return *_p; }
-            reference operator[](different_type n) const { return *(_p + n); }
+            reference operator[](difference_type n) const { return *(_p + n); }
             virtual ~RandomAccessIterator(){}
 
         }; // class RandomAccessIterator
 
-    public:
         template<typename A>
         friend vector::template RandomAccessIterator<A>
-        operator+(const typename vector::template RandomAccessIterator<A>::different_type& a,
-                    const typename vector::template RandomAccessIterator<A>::different_type& b)
+        operator+(const typename vector::template RandomAccessIterator<A>::difference_type& a,
+                    const typename vector::template RandomAccessIterator<A>::difference_type& b)
         { return a + b; }
 
         template<typename A>
         friend vector::template RandomAccessIterator<A>
-        operator-(const typename vector::template RandomAccessIterator<A>::different_type& a,
-                    const typename vector::template RandomAccessIterator<A>::different_type& b)
-        { return b - a; }
+        operator-(const typename vector::template RandomAccessIterator<A>::difference_type& a,
+                    const typename vector::template RandomAccessIterator<A>::difference_type& b)
+        { return a - b; }
 
         template<typename A, typename B>
         friend vector::template RandomAccessIterator<A>
-        operator+(const typename vector::template RandomAccessIterator<A>::different_type& a,
-                    const typename vector::template RandomAccessIterator<B>::different_type& b)
+        operator+(const typename vector::template RandomAccessIterator<A>::difference_type& a,
+                    const typename vector::template RandomAccessIterator<B>::difference_type& b)
         { return &(*a) + &(*b); }
 
         template<typename A, typename B>
         friend vector::template RandomAccessIterator<A>
-        operator-(const typename vector::template RandomAccessIterator<A>::different_type& a,
-                    const typename vector::template RandomAccessIterator<B>::different_type& b)
+        operator-(const typename vector::template RandomAccessIterator<A>::difference_type& a,
+                    const typename vector::template RandomAccessIterator<B>::difference_type& b)
         { return &(*a) - &(*b); }
 
         template<typename A, typename B>
-        friend bool operator==(const typename vector::template RandomAccessIterator<A>::different_type& a,
-                    const typename vector::template RandomAccessIterator<B>::different_type& b)
+        friend bool operator==(const typename vector::template RandomAccessIterator<A>::difference_type& a,
+                    const typename vector::template RandomAccessIterator<B>::difference_type& b)
         { return &(*a) == &(*b); }
 
         template<typename A, typename B>
-        friend bool operator!=(const typename vector::template RandomAccessIterator<A>::different_type& a,
-                    const typename vector::template RandomAccessIterator<B>::different_type& b)
+        friend bool operator!=(const typename vector::template RandomAccessIterator<A>::difference_type& a,
+                    const typename vector::template RandomAccessIterator<B>::difference_type& b)
         { return &(*a) != &(*b); }
         
         template<typename A, typename B>
-        friend bool operator>(const typename vector::template RandomAccessIterator<A>::different_type& a,
-                    const typename vector::template RandomAccessIterator<B>::different_type& b)
+        friend bool operator>(const typename vector::template RandomAccessIterator<A>::difference_type& a,
+                    const typename vector::template RandomAccessIterator<B>::difference_type& b)
         { return &(*a) > &(*b); }
         
         template<typename A, typename B>
-        friend bool operator<(const typename vector::template RandomAccessIterator<A>::different_type& a,
-                    const typename vector::template RandomAccessIterator<B>::different_type& b)
+        friend bool operator<(const typename vector::template RandomAccessIterator<A>::difference_type& a,
+                    const typename vector::template RandomAccessIterator<B>::difference_type& b)
         { return &(*a) < &(*b); }
         
         template<typename A, typename B>
-        friend bool operator>=(const typename vector::template RandomAccessIterator<A>::different_type& a,
-                    const typename vector::template RandomAccessIterator<B>::different_type& b)
+        friend bool operator>=(const typename vector::template RandomAccessIterator<A>::difference_type& a,
+                    const typename vector::template RandomAccessIterator<B>::difference_type& b)
         { return &(*a) >= &(*b); }
         
         template<typename A, typename B>
-        friend bool operator<=(const typename vector::template RandomAccessIterator<A>::different_type& a,
-                    const typename vector::template RandomAccessIterator<B>::different_type& b)
+        friend bool operator<=(const typename vector::template RandomAccessIterator<A>::difference_type& a,
+                    const typename vector::template RandomAccessIterator<B>::difference_type& b)
         { return &(*a) <= &(*b); }
     
     public:
@@ -281,11 +280,13 @@ namespace ft
             else if (n > this->_s)
             {
                 if (n > this->_c)
-                    this->reverse(_c * 2 > n ? _c * 2 : n);
+                    reserve(_c * 2 > n ? _c * 2 : n);
                 for (size_type i = _s; i < n; i++)
                     _a.construct(_p + i, val);
+                _s = n;
             }
         }
+        
         void reserve (size_type n)
         {
             if (n > max_size())

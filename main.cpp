@@ -1,5 +1,4 @@
 #include "vector/vector.hpp"
-#include <vector>
 #include <iomanip>
 
 int main()
@@ -91,8 +90,25 @@ int main()
         vec.push_back(25);
         vec.push_back(35);
         vec.push_back(45);
-        std::cout << "Erase: " << *vec.erase(vec.begin()) << std::endl;
 
+        ft::vector<int> vec1;
+        vec1.push_back(85);
+        vec1.push_back(105);
+        vec1.push_back(205);
+        vec1.push_back(305);
+        vec1.push_back(405);
+        // std::cout << "Erase: " << *vec.erase(vec.end()) << std::endl;
+        vec.swap(vec1);
+        for (size_t i = 0; i < vec.size(); i++)
+            std::cout << "vector[" << i << "]= " << vec[i] << " == vector.at("
+                    << i << ")= " << vec1.at(i) << std::endl;
+        vec.resize(3, 100);
+        for (size_t i = 0; i < vec.size(); i++)
+            std::cout << "resize vector[" << i << "]= " << vec[i] << std::endl;
+        vec.reserve(30);
+        std::cout << "vec.size(): " << vec.size() << std::endl;
+        std::cout << "vec.max_size(): " << vec.max_size() << std::endl;
+        std::cout << "vec.capacity(): " << vec.capacity() << std::endl;
         std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
     }
     // std::cout << "vec.rbegin(): " << *(vec.rbegin()) << std::endl;
