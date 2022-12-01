@@ -98,32 +98,32 @@ namespace ft
 
         template<typename A, typename B>
         friend bool operator==(const vector::template RandomAccessIterator<A>& a,
-                    const vector::template RandomAccessIterator<B>& b)
+                                const vector::template RandomAccessIterator<B>& b)
         { return &(*a) == &(*b); }
 
         template<typename A, typename B>
         friend bool operator!=(const typename vector::template RandomAccessIterator<A>& a,
-                    const typename vector::template RandomAccessIterator<B>& b)
+                                const typename vector::template RandomAccessIterator<B>& b)
         { return &(*a) != &(*b); }
         
         template<typename A, typename B>
         friend bool operator>(const typename vector::template RandomAccessIterator<A>& a,
-                    const typename vector::template RandomAccessIterator<B>& b)
+                                const typename vector::template RandomAccessIterator<B>& b)
         { return &(*a) > &(*b); }
         
         template<typename A, typename B>
         friend bool operator<(const typename vector::template RandomAccessIterator<A>& a,
-                    const typename vector::template RandomAccessIterator<B>& b)
+                                const typename vector::template RandomAccessIterator<B>& b)
         { return &(*a) < &(*b); }
         
         template<typename A, typename B>
         friend bool operator>=(const typename vector::template RandomAccessIterator<A>& a,
-                    const typename vector::template RandomAccessIterator<B>& b)
+                                const typename vector::template RandomAccessIterator<B>& b)
         { return &(*a) >= &(*b); }
         
         template<typename A, typename B>
         friend bool operator<=(const typename vector::template RandomAccessIterator<A>& a,
-                    const typename vector::template RandomAccessIterator<B>& b)
+                                const typename vector::template RandomAccessIterator<B>& b)
         { return &(*a) <= &(*b); }
     
     public:
@@ -148,7 +148,7 @@ namespace ft
 
     public:
         explicit vector(const allocator_type& alloc = allocator_type())
-            : _s(0), _c(0), _a(alloc), _p(nullptr) {}
+            : _s(0), _c(0), _a(alloc), _p(0) {}
         explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
             : _s(n), _c(n), _a(alloc)
         {
@@ -156,8 +156,10 @@ namespace ft
             for(size_type i = -1; i < n; ++i)
                 _a.construct(_p + i, val);
         }
+
         template <class InputIterator>
-        vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) : _a(alloc)
+        vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
+                typename enable_if<!is_integral<InputIterator>::value>::type* = 0) : _a(alloc)
         {
             if (first > last)
                 throw std::length_error("Error vector's iterator!");
@@ -167,6 +169,7 @@ namespace ft
             for(difference_type i = 0; i < static_cast<difference_type>(_s); ++i)
                 _a.construct(_p + i, *(_p + i));
         }
+
         vector (const vector& x) : _s(0), _c(0)
         { *this = x; }
 
@@ -342,17 +345,18 @@ namespace ft
             }
         }
 
-        template <class InputIterator>
-        void assign (InputIterator first, InputIterator last)
+        template <typename InputIterator>
+        void assign (InputIterator first, InputIterator last,
+                    typename enable_if<!is_integral<InputIterator>::value>::type* = 0)
         {
             if (first > last)
                 throw std::logic_error("vector: undefined behavior");
-            difference_type len = last - first;
             clear();
+            difference_type len = last - first;
             if (len > static_cast<difference_type>(capacity()))
             {
                 _a.deallocate(_p, _c);
-                _a.allocate(len);
+                _p = _a.allocate(len);
                 _c = len;
             }
             iterator it = begin();
@@ -371,7 +375,7 @@ namespace ft
             if (n > _c)
             {
                 _a.deallocate(_p, _c);
-                _a.allocate(n);
+                _p = _a.allocate(n);
                 _c = n;
             }
             for (size_type i = 0; i < n; i++)
@@ -467,7 +471,8 @@ namespace ft
         }
 
         template <class InputIterator>
-        void insert (iterator position, InputIterator first, InputIterator last)
+        void insert (iterator position, InputIterator first, InputIterator last,
+                    typename enable_if<!is_integral<InputIterator>::value>::type* = 0)
         {
             if (position < begin() || position > end() || first > last)
                 throw std::logic_error("vector: undefined behavior");
@@ -513,7 +518,7 @@ namespace ft
     {
         if (lhs.size() != rhs.size())
             return false;
-        for (int i = 0 ; i < rhs.size(); ++i)
+        for (size_t i = 0 ; i < rhs.size(); ++i)
             if (lhs[i] != rhs[i])
                 return false;
         return true;

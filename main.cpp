@@ -1,6 +1,6 @@
 #include "vector/vector.hpp"
 #include <iomanip>
-#include <vector>
+// #include <vector>
 
 int main()
 {
@@ -53,7 +53,7 @@ int main()
     }
 
     {
-        std::cout << std::endl << "\e[1m" << "*-----------------clear---------------------*" << "\e[0m" <<std::endl;
+        std::cout << std::endl << "\e[1m" << "*-----pop_back()---(r)begin()---(r)end------*" << "\e[0m" <<std::endl;
         ft::vector<int> vec;
         vec.push_back(5);
         vec.push_back(15);
@@ -63,7 +63,6 @@ int main()
             std::cout << "vector[" << i << "]= " << vec[i] << " == vector.at("
                     << i << ")= " << vec.at(i) << std::endl;
         ft::vector<int> vec2(vec);
-        // vec.clear();
         std::cout << "vec.size(): " << vec.size() << std::endl;
         std::cout << "vec.capacity(): " << vec.capacity() << std::endl;
         for (size_t i = 0; i < vec2.size(); i++)
@@ -84,7 +83,7 @@ int main()
     }
 
     {
-        std::cout << std::endl << "\e[1m" << "*-----------------clear---------------------*" << "\e[0m" <<std::endl;
+        std::cout << std::endl << "\e[1m" << "*---------swap/resize/reserve/clear---------*" << "\e[0m" <<std::endl;
         ft::vector<int> vec;
         vec.push_back(5);
         vec.push_back(15);
@@ -109,17 +108,43 @@ int main()
         // for (size_t i = 0; i < origin_vec.size(); i++)
         //     std::cout << "origin_vector[" << i << "]= " << origin_vec[i] << std::endl;
         std::cout << "Erase: " << *vec.erase(vec.end() - 1) << std::endl;
+        std::cout << std::endl;
         for (size_t i = 0; i < vec.size(); i++)
             std::cout << "vector[" << i << "]= " << vec[i] << std::endl;
-        
+
         vec.swap(vec1);
-        vec.resize(3, 100);
+
+        vec.resize(10, 100);
         for (size_t i = 0; i < vec.size(); i++)
-            std::cout << "resize vector[" << i << "]= " << vec[i] << std::endl;
+            std::cout << "resize_vector[" << i << "]= " << vec[i] << std::endl;
         vec.reserve(30);
-        std::cout << "vec.size(): " << vec.size() << std::endl;
-        std::cout << "vec.max_size(): " << vec.max_size() << std::endl;
-        std::cout << "vec.capacity(): " << vec.capacity() << std::endl;
+        std::cout << std::endl << "resize_vec.size(): " << vec.size() << std::endl;
+        std::cout << "resize_vec.max_size(): " << vec.max_size() << std::endl;
+        std::cout << "resize_vec.capacity(): " << vec.capacity() << std::endl;
+        std::cout << std::endl;
+        ft::vector<int>::iterator bit = vec.begin() + 2;
+        ft::vector<int>::iterator eit = vec.end();
+        vec.erase(bit, eit);
+        for (size_t i = 0; i < vec.size(); i++)
+            std::cout << "erase_iterator_vec[" << i << "]= " << vec[i] << std::endl;
+        vec.clear();
+        for (size_t i = 0; i < vec.size(); i++)
+            std::cout << "clear_vector[" << i << "]= " << vec[i] << std::endl;
+        std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
+    }
+    
+    {
+        std::cout << std::endl << "\e[1m" << "*--------------------assign-----------------*" << "\e[0m" <<std::endl;
+        ft::vector<int> vec;
+        vec.assign(5, 42);
+        for (size_t i = 0; i < vec.size(); i++)
+            std::cout << "vector[" << i << "]= " << vec[i] << std::endl;
+        std::cout << std::endl;
+        ft::vector<int> vec1;
+        vec1.assign(3, 45);
+        vec.assign(vec1.begin(), vec1.end());
+        for (size_t i = 0; i < vec1.size(); i++)
+            std::cout << "vector[" << i << "]= " << vec1[i] << std::endl;
         std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
     }
     // std::cout << "vec.rbegin(): " << *(vec.rbegin()) << std::endl;

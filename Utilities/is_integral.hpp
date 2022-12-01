@@ -3,6 +3,15 @@
 
 namespace ft
 {
+    template <class T, bool val>
+    struct integral_constant
+    {
+        static const bool value = val;
+        typedef T                   value_type;
+        typedef integral_constant   type;
+        operator value_type() const { return value; }
+    };
+
     template <class T>
     struct is_integral { static const bool val = false; };
 
