@@ -1,6 +1,6 @@
 #include "vector/vector.hpp"
 #include <iomanip>
-// #include <vector>
+#include <vector>
 
 int main()
 {
@@ -142,13 +142,137 @@ int main()
         std::cout << std::endl;
         ft::vector<int> vec1;
         vec1.assign(3, 45);
-        vec.assign(vec1.begin(), vec1.end());
+        // vec.assign(vec1.begin(), vec1.end());
         for (size_t i = 0; i < vec1.size(); i++)
             std::cout << "vector[" << i << "]= " << vec1[i] << std::endl;
         std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
     }
-    // std::cout << "vec.rbegin(): " << *(vec.rbegin()) << std::endl;
-    // std::cout << "vec.rend(): " << *(vec.rend()) << std::endl;
+    {
+        std::cout << std::endl << "\e[1m" << "*--------------------insert-----------------*" << "\e[0m" <<std::endl;
+        ft::vector<int> vec;
+        vec.push_back(15);
+        vec.push_back(25);
+        vec.insert(vec.begin(), 5, 4);
+        vec.insert(vec.begin(), 5);
+        // vec.insert(vec.begin(), vec.begin() + 6, vec.end());
+        for (size_t i = 0; i < vec.size(); i++)
+            std::cout << "vector[" << i << "]= " << vec[i] << std::endl;
+        std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
+    }
+    {
+        std::cout << std::endl << "\e[1m" << "*----------------resize----------------*" << "\e[0m" <<std::endl;
+        ft::vector<int> vec;
+        vec.push_back(5);
+        vec.push_back(15);
+        vec.push_back(25);
+        vec.push_back(35);
+        vec.push_back(45);
+        // vec.resize(vec.max_size(), 45);
+        // vec.resize(-1, 100);
+        vec.resize(10, 100);
+        std::cout << "\e[1m" << "resize(10, 100) size: " << "\e[0m" << vec.size() << std::endl;
+        for (size_t i = 0; i < vec.size(); i++)
+            std::cout << "resize_vector[" << i << "]= " << vec[i] << std::endl;
+        vec.resize(0);
+        std::cout << "\e[1m" << "resize(0) size: " << "\e[0m" << vec.size() << std::endl;
+        for (size_t i = 0; i < vec.size(); i++)
+            std::cout << "resize_vector[" << i << "]= " << vec[i] << std::endl;
+        vec.resize(5);
+        std::cout << "\e[1m" << "resize(5) size: " << "\e[0m" << vec.size() << std::endl;
+        for (size_t i = 0; i < vec.size(); i++)
+            std::cout << "resize_vector[" << i << "]= " << vec[i] << std::endl;
+        std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
 
+    }
+
+    {
+        ft::vector<int> vec;
+        vec.push_back(5);
+        vec.push_back(42);
+
+        ft::vector<int> vec1;
+        vec1.push_back(5);
+        vec1.push_back(42);
+
+        ft::vector<int> vec3;
+		vec3.push_back(5);
+		vec3.push_back(42);
+		vec3.push_back(43);
+
+        ft::vector<int> vec4;
+		vec4.push_back(99);
+		vec4.push_back(42);
+		vec4.push_back(43);
+
+        std::cout << std::endl << "\e[1m" << "*---------------Operators----------------*" << "\e[0m" <<std::endl;
+        std::cout << "operator== " << (vec == vec1) << std::endl;
+        std::cout << "operator!= " << (vec != vec1) << std::endl;
+        std::cout << "operator<  " << (vec < vec1) << std::endl;
+        std::cout << "operator>  " << (vec > vec1) << std::endl;
+        std::cout << "operator<= " << (vec <= vec1) << std::endl;
+        std::cout << "operator>= " << (vec >= vec1) << std::endl;
+        std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
+
+        std::cout << std::endl << "\e[1m" << "*---------------Operators----------------*" << "\e[0m" <<std::endl;
+        std::cout << "operator== " << (vec == vec3) << std::endl;
+        std::cout << "operator!= " << (vec != vec3) << std::endl;
+        std::cout << "operator<  " << (vec < vec3) << std::endl;
+        std::cout << "operator>  " << (vec > vec3) << std::endl;
+        std::cout << "operator<= " << (vec <= vec3) << std::endl;
+        std::cout << "operator>= " << (vec >= vec3) << std::endl;
+        std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
+
+        std::cout << std::endl << "\e[1m" << "*---------------Operators----------------*" << "\e[0m" <<std::endl;
+        std::cout << "operator== " << (vec4 == vec) << std::endl;
+        std::cout << "operator!= " << (vec4 != vec) << std::endl;
+        std::cout << "operator<  " << (vec4 < vec) << std::endl;
+        std::cout << "operator>  " << (vec4 > vec) << std::endl;
+        std::cout << "operator<= " << (vec4 <= vec) << std::endl;
+        std::cout << "operator>= " << (vec4 >= vec) << std::endl;
+        std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
+
+        // std::vector<int> v;
+        // std::vector<int> v1;
+        // std::vector<int> v3;
+        // std::vector<int> v4;
+
+        // v.push_back(5);
+        // v.push_back(42);
+        // v1.push_back(5);
+        // v1.push_back(42);
+        // v3.push_back(5);
+		// v3.push_back(42);
+		// v3.push_back(43);
+        // v4.push_back(99);
+		// v4.push_back(42);
+		// v4.push_back(43);
+
+        // std::cout << std::endl << "\e[1m" << "*---------------Original Operators----------------*" << "\e[0m" <<std::endl;
+        // std::cout << "operator== " << (v == v1) << std::endl;
+        // std::cout << "operator!= " << (v != v1) << std::endl;
+        // std::cout << "operator<  " << (v < v1) << std::endl;
+        // std::cout << "operator>  " << (v > v1) << std::endl;
+        // std::cout << "operator<= " << (v <= v1) << std::endl;
+        // std::cout << "operator>= " << (v >= v1) << std::endl;
+        // std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
+
+        // std::cout << std::endl << "\e[1m" << "*---------------Original Operators----------------*" << "\e[0m" <<std::endl;
+        // std::cout << "operator== " << (v == v3) << std::endl;
+        // std::cout << "operator!= " << (v != v3) << std::endl;
+        // std::cout << "operator<  " << (v < v3) << std::endl;
+        // std::cout << "operator>  " << (v > v3) << std::endl;
+        // std::cout << "operator<= " << (v <= v3) << std::endl;
+        // std::cout << "operator>= " << (v >= v3) << std::endl;
+        // std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
+
+        // std::cout << std::endl << "\e[1m" << "*---------------Original Operators----------------*" << "\e[0m" <<std::endl;
+        // std::cout << "operator== " << (v4 == v) << std::endl;
+        // std::cout << "operator!= " << (v4 != v) << std::endl;
+        // std::cout << "operator<  " << (v4 < v) << std::endl;
+        // std::cout << "operator>  " << (v4 > v) << std::endl;
+        // std::cout << "operator<= " << (v4 <= v) << std::endl;
+        // std::cout << "operator>= " << (v4 >= v) << std::endl;
+        // std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
+    }
 
 }

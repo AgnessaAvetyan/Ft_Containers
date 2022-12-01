@@ -45,13 +45,13 @@ namespace ft
             {
                 RandomAccessIterator temp(*this);
                 ++_p;
-                return *this;
+                return temp;
             }
             RandomAccessIterator operator--(int)
             {
                 RandomAccessIterator temp(*this);
                 --_p;
-                return *this;
+                return temp;
             }
             RandomAccessIterator operator+(const difference_type& it) const { return _p + it; }
             RandomAccessIterator operator-(const difference_type& it) const { return _p - it; }
@@ -152,6 +152,7 @@ namespace ft
         explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
             : _s(n), _c(n), _a(alloc)
         {
+            std::cout << "vector ctor" << std::endl;
             _p = _a.allocate(n);
             for(size_type i = -1; i < n; ++i)
                 _a.construct(_p + i, val);
@@ -220,14 +221,14 @@ namespace ft
         const_reverse_iterator crbegin() const { return const_reverse_iterator(_p + _s); }
         const_reverse_iterator crend() const { return const_reverse_iterator(_p); }
 
-        reference at (size_type n)
+        reference at (size_type n) // ok
         {
             if (n >= _s)
                 throw std::out_of_range("out of range");
             return (*(_p + n));
         }
 
-        const_reference at (size_type n) const
+        const_reference at (size_type n) const 
         {
             if (n >= _s)
                 throw std::out_of_range("out of range");
@@ -296,7 +297,7 @@ namespace ft
             _s = 0;
         }
 
-        void resize (size_type n, value_type val = value_type())
+        void resize (size_type n, value_type val = value_type()) //ok
         {
             if (n < this->_s)
             {
@@ -317,7 +318,7 @@ namespace ft
         void reserve (size_type n)
         {
             if (n > max_size())
-                throw std::length_error("The size requested is greater than the maximum size");
+                throw std::length_error("vector");
             else if (n < this->capacity())
                 return ;
             else
@@ -347,7 +348,7 @@ namespace ft
 
         template <typename InputIterator>
         void assign (InputIterator first, InputIterator last,
-                    typename enable_if<!is_integral<InputIterator>::value>::type* = 0)
+                    typename enable_if<!is_integral<InputIterator>::value>::type* = 0) // don't work
         {
             if (first > last)
                 throw std::logic_error("vector: undefined behavior");
@@ -369,7 +370,7 @@ namespace ft
             _s = len;
         }
 	
-        void assign (size_type n, const value_type& val)
+        void assign (size_type n, const value_type& val) //ok
         {
             clear();
             if (n > _c)
@@ -382,8 +383,8 @@ namespace ft
                 _a.construct(_p + i, val);
             _s = n;
         }
-    
-        void push_back (const value_type& val)
+     
+        void push_back (const value_type& val) //ok
         {
             if (_s == _c)
                 reserve(_c == 0 ? 1 : _c * 2);
@@ -391,7 +392,7 @@ namespace ft
             ++_s;
         }
 
-        void pop_back()
+        void pop_back() // ok
         {
             if (_s == 0)
                 return ;
@@ -399,7 +400,7 @@ namespace ft
             _s--;
         }
         
-        iterator insert (iterator position, const value_type& val)
+        iterator insert (iterator position, const value_type& val) //ok
         {
             if (position < this->begin() || position > this->end()) 
                 throw std::logic_error("vector: undefined behavior");
@@ -407,9 +408,10 @@ namespace ft
             {
                 _c = _c * 2 + (_c == 0);
                 pointer vec = _a.allocate(_c);
+                difference_type start = position - begin();
                 std::uninitialized_copy(begin(), position, iterator(vec));
-                _a.construct(vec + position - begin(), val);
-                std::uninitialized_copy(position, end(), iterator(vec + position - begin() + 1));
+                _a.construct(vec + start, val);
+                std::uninitialized_copy(position, end(), iterator(vec + start + 1));
                 for(size_type i = 0; i < _s; ++i)
                     _a.destroy(_p + i);
                 if (_c)
@@ -431,7 +433,7 @@ namespace ft
             return position;
         }
 
-        void insert (iterator position, size_type n, const value_type& val)
+        void insert (iterator position, size_type n, const value_type& val) //ok
         {
             if (position < this->begin() || position > this->end()) 
                 throw std::logic_error("vector: undefined behavior");
@@ -439,7 +441,7 @@ namespace ft
                 return ;
             else if (max_size() - _s < n)
                 throw std::length_error("vector: undefined behavior");
-            iterator beg = position - begin();
+            difference_type beg = position - begin();
             if (_s + n > _c)
             {
                 _c = (_c * 2 > _s + n ? _c * 2 : _s + n);
@@ -470,14 +472,14 @@ namespace ft
             _s += n;
         }
 
-        template <class InputIterator>
+        template <typename InputIterator>
         void insert (iterator position, InputIterator first, InputIterator last,
-                    typename enable_if<!is_integral<InputIterator>::value>::type* = 0)
+                    typename enable_if<!is_integral<InputIterator>::value>::type* = 0) //don't work
         {
             if (position < begin() || position > end() || first > last)
                 throw std::logic_error("vector: undefined behavior");
             size_type len = static_cast<size_type>(last - first);
-            iterator beg = position - begin();
+            difference_type beg = position - begin();
             if (_s + len > _c)
             {
                 _c = (_c * 2 > _s + len ? _c * 2 : _s + len);
@@ -532,10 +534,11 @@ namespace ft
     { return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()); }
 
     template <class T, class Alloc>
-    bool operator<=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return lhs < rhs ; }
+    bool operator<=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return !(lhs > rhs) ; }
 
     template <class T, class Alloc>
-    bool operator> (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return lhs > rhs; }
+    bool operator> (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+    { return ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()); }
 
     template <class T, class Alloc>
     bool operator>=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return !(lhs < rhs); }
