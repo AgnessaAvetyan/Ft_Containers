@@ -142,7 +142,7 @@ int main()
         std::cout << std::endl;
         ft::vector<int> vec1;
         vec1.assign(3, 45);
-        // vec.assign(vec1.begin(), vec1.end());
+        vec1.assign(vec.begin() + 2, vec.end());
         for (size_t i = 0; i < vec1.size(); i++)
             std::cout << "vector[" << i << "]= " << vec1[i] << std::endl;
         std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
@@ -154,9 +154,17 @@ int main()
         vec.push_back(25);
         vec.insert(vec.begin(), 5, 4);
         vec.insert(vec.begin(), 5);
-        // vec.insert(vec.begin(), vec.begin() + 6, vec.end());
+        vec.insert(vec.begin(), vec.begin(), vec.end());
         for (size_t i = 0; i < vec.size(); i++)
             std::cout << "vector[" << i << "]= " << vec[i] << std::endl;
+        // std::vector<int> v;
+        // v.push_back(15);
+        // v.push_back(25);
+        // v.insert(v.begin(), 5, 4);
+        // v.insert(v.begin(), 5);
+        // v.insert(v.begin(), v.begin(), v.end());
+        // for (size_t i = 0; i < v.size(); i++)
+        //     std::cout << "vtor[" << i << "]= " << v[i] << std::endl;
         std::cout << "\e[1m" << "*-------------------------------------------*" << "\e[0m" << std::endl;
     }
     {

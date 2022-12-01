@@ -10,7 +10,6 @@ namespace ft
         template <typename It>
         class RandomAccessIterator
         {
-
         public:
             typedef typename iterator_traits<It*>::difference_type  difference_type;
             typedef typename iterator_traits<It*>::value_type       value_type;
@@ -23,8 +22,8 @@ namespace ft
             pointer _p;
 
         public:
-            RandomAccessIterator() : _p(){}
-            RandomAccessIterator(pointer p) : _p(p){}
+            RandomAccessIterator() : _p() {}
+            RandomAccessIterator(pointer p) : _p(p) {}
             RandomAccessIterator(const RandomAccessIterator<typename remove_const<value_type>::type>& p) : _p(&(*p)) {}
             RandomAccessIterator<value_type>& operator=(RandomAccessIterator<typename remove_const<value_type>::type> const& p)
             {
@@ -82,7 +81,7 @@ namespace ft
         friend vector::template RandomAccessIterator<A>
         operator-(const typename vector::template RandomAccessIterator<A>::difference_type& a,
                     const typename vector::template RandomAccessIterator<A>::difference_type& b)
-        { return a - b; }
+        { return b - a; }
 
         template<typename A, typename B>
         friend typename vector::template RandomAccessIterator<A>::difference_type
@@ -141,8 +140,8 @@ namespace ft
         typedef std::size_t                                     size_type;
 
     private:
-        size_t          _s;
-        size_t          _c;
+        size_type       _s;
+        size_type       _c;
         allocator_type  _a;
         pointer         _p;
 
@@ -152,7 +151,6 @@ namespace ft
         explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
             : _s(n), _c(n), _a(alloc)
         {
-            std::cout << "vector ctor" << std::endl;
             _p = _a.allocate(n);
             for(size_type i = -1; i < n; ++i)
                 _a.construct(_p + i, val);
@@ -163,12 +161,12 @@ namespace ft
                 typename enable_if<!is_integral<InputIterator>::value>::type* = 0) : _a(alloc)
         {
             if (first > last)
-                throw std::length_error("Error vector's iterator!");
+                throw std::length_error("vector");
             _s = last - first;
             _c = _s;
             _p = _a.allocate(_c);
-            for(difference_type i = 0; i < static_cast<difference_type>(_s); ++i)
-                _a.construct(_p + i, *(_p + i));
+            for(difference_type i = 0; i < static_cast<difference_type>(_s); i++)
+                _a.construct(_p + i, *(first + i));
         }
 
         vector (const vector& x) : _s(0), _c(0)
@@ -178,8 +176,8 @@ namespace ft
         {
             if (this == &x)
                 return *this;
-            for (size_type i = 0; i < _s; ++i)
-                _a.destroy(_p + 1);
+            for (size_type i = 0; i < _s; i++)
+                _a.destroy(_p + i);
             this->_s = x._s;
             if (_c < _s)
             {
@@ -188,7 +186,7 @@ namespace ft
                 _c = _s;
                 _p = _a.allocate(_c);
             }
-            for (size_type i = 0; i < _s; ++i)
+            for (size_type i = 0; i < _s; i++)
                 _a.construct(_p + i, x[i]);
             return *this;
         }
@@ -224,19 +222,19 @@ namespace ft
         reference at (size_type n) // ok
         {
             if (n >= _s)
-                throw std::out_of_range("out of range");
+                throw std::out_of_range("vector out of range");
             return (*(_p + n));
         }
 
         const_reference at (size_type n) const 
         {
             if (n >= _s)
-                throw std::out_of_range("out of range");
+                throw std::out_of_range("vector out of range");
             return (*(_p + n));
         }
 
-        reference operator[] (size_type n) { return at(n); }
-        const_reference operator[] (size_type n) const { return at(n); }
+        reference operator[] (size_type n) { return this->at(n); }
+        const_reference operator[] (size_type n) const { return this->at(n); }
         reference front() { return (*_p); }
         const_reference front() const { return (*_p); }
         reference back() { return (*(_p + _s - 1)); }
@@ -284,10 +282,10 @@ namespace ft
 
         void swap (vector& x)
         {
-            ft::swap(_a, x._a);
             ft::swap(_p, x._p);
             ft::swap(_s, x._s);
             ft::swap(_c, x._c);
+            ft::swap(_a, x._a);
         }
 
         void clear()
@@ -308,10 +306,10 @@ namespace ft
             else if (n > this->_s)
             {
                 if (n > this->_c)
-                    reserve(_c * 2 > n ? _c * 2 : n);
+                    this->reserve(_c * 2 > n ? _c * 2 : n);
                 for (size_type i = _s; i < n; i++)
                     _a.construct(_p + i, val);
-                _s = n;
+                _s += n;
             }
         }
         
@@ -321,29 +319,29 @@ namespace ft
                 throw std::length_error("vector");
             else if (n < this->capacity())
                 return ;
-            else
+            pointer vec = _a.allocate(n);
+            try
             {
-                pointer vec = _a.allocate(n);
                 for (size_type i = 0; i < _s; i++)
                     _a.construct(vec + i, *(_p + i));
-                for (size_type i = 0; i < _s; i++)
-                    _a.destroy(_p + i);
-                if (_c)
-                    _a.deallocate(_p, _c);
-                _c = n;
-                _p = vec;
-                // try
-                // {
-                //     for (size_t i = 0; i < _s; i++)
-                //         _a.construct(vec + i, *(_p + i));
-                // }
-                // catch(const std::exception& e)
-                // {
-                //     for (size_t i = 0; vec + i != NULL && i < _s; i++)
-                //         _a.destroy(vec + i);
-                //     _a.deallocate(vec, n);
-                // }
             }
+            catch (const std::exception& e)
+            {
+                size_type i = 0;
+                while (vec + i != NULL && i < _s)
+                {
+                    _a.destroy(vec + i);
+                    i++;
+                }
+                _a.deallocate(vec, n);
+                throw;
+            } 
+            for (size_type i = 0; i < _s; i++)
+                _a.destroy(_p + i);
+            if (_c)
+                _a.deallocate(_p, _c);
+            _c = n;
+            _p = vec;
         }
 
         template <typename InputIterator>
@@ -404,33 +402,33 @@ namespace ft
         {
             if (position < this->begin() || position > this->end()) 
                 throw std::logic_error("vector: undefined behavior");
+            difference_type start = position - begin();
             if (_s == _c)
             {
                 _c = _c * 2 + (_c == 0);
                 pointer vec = _a.allocate(_c);
-                difference_type start = position - begin();
                 std::uninitialized_copy(begin(), position, iterator(vec));
                 _a.construct(vec + start, val);
                 std::uninitialized_copy(position, end(), iterator(vec + start + 1));
-                for(size_type i = 0; i < _s; ++i)
+                for(size_type i = 0; i < _s; i++)
                     _a.destroy(_p + i);
-                if (_c)
-                    _a.deallocate(_p, _c);
+                if (_s)
+                    _a.deallocate(_p, _s);
                 _s++;
                 _p = vec;
             }
             else
             {
-                for (size_type i = _s; i < static_cast<size_type>(position - begin()); i++)
+                for (size_type i = _s; i < static_cast<size_type>(start); i--)
                 {
                     _a.destroy(_p + i);
                     _a.construct(_p + i, *(_p + i - 1));
                 }
                 _a.destroy(&(*position));
                 _a.construct(&(*position), val);
-                ++_s;             
+                _s++;             
             }
-            return position;
+            return begin() + start;
         }
 
         void insert (iterator position, size_type n, const value_type& val) //ok
@@ -458,7 +456,7 @@ namespace ft
             }
             else
             {
-                for (size_type i = _s; i < static_cast<size_type>(beg); i++)
+                for (size_type i = _s; i > static_cast<size_type>(beg); i--)
                 {
                     _a.destroy(_p + n + i - 1);
                     _a.construct(_p + n + i - 1, *(_p + i - 1));
@@ -479,16 +477,25 @@ namespace ft
             if (position < begin() || position > end() || first > last)
                 throw std::logic_error("vector: undefined behavior");
             size_type len = static_cast<size_type>(last - first);
-            difference_type beg = position - begin();
+            size_type beg = static_cast<size_type>(position - begin());
             if (_s + len > _c)
             {
-                _c = (_c * 2 > _s + len ? _c * 2 : _s + len);
+                _c = (_c * 2 >= _s + len ? _c * 2 : _s + len);
                 pointer vec = _a.allocate(_c);
                 std::uninitialized_copy(begin(), position, iterator(vec));
-                for (size_type i = 0; i < len; i++)
+                try
                 {
-                    _a.construct(vec + beg + i, *first);
-                    first++;
+                    for (size_type i = 0; i < static_cast<size_type>(len); i++)
+                    {
+                        _a.construct(vec + beg + i, *first);
+                        first++;
+                    }
+                }
+                catch(...)
+                {
+                    for (size_type i = 0; i < len + beg; ++i)
+                        _a.destroy(vec + i);
+                    _a.deallocate(vec, _c);
                 }
                 std::uninitialized_copy(position, end(), iterator(vec + beg + len));
                 for(size_type i = 0; i < _s; ++i)
@@ -499,12 +506,12 @@ namespace ft
             }
             else
             {
-                for (size_type i = _s; i < static_cast<size_type>(beg); i++)
+                for (size_type i = _s; i > static_cast<size_type>(beg); i--)
                 {
                     _a.destroy(_p + len + i - 1);
                     _a.construct(_p + len + i - 1, *(_p + i - 1));
                 }
-                for (size_type i = 0; i < len; i++)
+                for (size_type i = 0; i < static_cast<size_type>(len); i++)
                 {
                     _a.destroy(_p + beg + i);
                     _a.construct(_p + beg + i, *first);
@@ -527,21 +534,24 @@ namespace ft
     }
 
     template <class T, class Alloc>
-    bool operator!=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return (!(lhs == rhs)); }
+    bool operator!=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+    { return (!(lhs == rhs)); }
 
     template <class T, class Alloc>
     bool operator< (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
     { return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()); }
 
     template <class T, class Alloc>
-    bool operator<=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return !(lhs > rhs) ; }
+    bool operator<=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+    { return !(lhs > rhs) ; }
 
     template <class T, class Alloc>
     bool operator> (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
     { return ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()); }
 
     template <class T, class Alloc>
-    bool operator>=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return !(lhs < rhs); }
+    bool operator>=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+    { return !(lhs < rhs); }
 
     template <class T, class Alloc>
     void swap (ft::vector<T, Alloc>& x, ft::vector<T, Alloc>& y) { x.ft::swap(y); }
