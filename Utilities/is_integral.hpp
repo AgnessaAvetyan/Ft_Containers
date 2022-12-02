@@ -50,7 +50,7 @@ namespace ft
 
     // template <>
     // struct is_integral<unsigned long long int> { static const bool val = true; };
-        template<class T, bool val>
+    template<class T, bool val>
     struct integral_constant
     {
         static const bool value = val;
