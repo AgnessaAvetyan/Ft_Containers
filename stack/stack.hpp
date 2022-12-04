@@ -38,7 +38,6 @@ namespace ft
         void pop()
             { m_c.pop_back(); }
 
-
         template <class A, class Cont>
         friend bool operator== (const stack<A, Cont>& lhs, const stack<A, Cont>& rhs)
             { return lhs.m_c == rhs.m_c; }

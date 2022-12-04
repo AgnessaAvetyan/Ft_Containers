@@ -54,12 +54,12 @@ namespace ft
             }
             RandomAccessIterator operator+(const difference_type& it) const { return _p + it; }
             RandomAccessIterator operator-(const difference_type& it) const { return _p - it; }
-            RandomAccessIterator& operator+=(const difference_type& it) const
+            RandomAccessIterator& operator+=(const difference_type& it)
             {
                 _p += it;
                 return *this;
             }
-            RandomAccessIterator& operator-=(const difference_type& it) const
+            RandomAccessIterator& operator-=(const difference_type& it)
             {
                 _p -= it;
                 return *this;
@@ -147,12 +147,12 @@ namespace ft
 
     public:
         explicit vector(const allocator_type& alloc = allocator_type())
-            : _s(0), _c(0), _a(alloc), _p(0) {}
+            : _s(0), _c(0), _a(alloc), _p(nullptr) {}
         explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
             : _s(n), _c(n), _a(alloc)
         {
             _p = _a.allocate(n);
-            for(size_type i = -1; i < n; ++i)
+            for(size_type i = 0; i < n; ++i)
                 _a.construct(_p + i, val);
         }
 
@@ -520,38 +520,39 @@ namespace ft
             }
             _s += len;
         }
-    }; // class vector
 
-    template <class T, class Alloc>
-    bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+    }; // class vector
+    template <class X, class A>
+    bool operator== (const vector<X,A>& lhs, const vector<X,A>& rhs)
     {
         if (lhs.size() != rhs.size())
             return false;
-        for (size_t i = 0 ; i < rhs.size(); ++i)
+        for (size_t i = 0 ; i < rhs.size(); i++)
             if (lhs[i] != rhs[i])
                 return false;
         return true;
     }
 
-    template <class T, class Alloc>
-    bool operator!=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+    template <class X, class A>
+    bool operator!=(const vector<X,A>& lhs, const vector<X,A>& rhs)
     { return (!(lhs == rhs)); }
 
-    template <class T, class Alloc>
-    bool operator< (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+    template <class X, class A>
+    bool operator< (const vector<X,A>& lhs, const vector<X,A>& rhs)
     { return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()); }
 
-    template <class T, class Alloc>
-    bool operator<=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
-    { return !(lhs > rhs) ; }
+    template <class X, class A>
+    bool operator<=(const vector<X,A>& lhs, const vector<X,A>& rhs)
+    { return !(rhs < lhs); }
 
-    template <class T, class Alloc>
-    bool operator> (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
-    { return ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()); }
+    template <class X, class A>
+    bool operator> (const vector<X,A>& lhs, const vector<X,A>& rhs)
+    { return rhs < lhs; } 
 
-    template <class T, class Alloc>
-    bool operator>=(const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+    template <class X, class A>
+    bool operator>=(const vector<X,A>& lhs, const vector<X,A>& rhs)
     { return !(lhs < rhs); }
+    
 
     template <class T, class Alloc>
     void swap (ft::vector<T, Alloc>& x, ft::vector<T, Alloc>& y) { x.ft::swap(y); }
