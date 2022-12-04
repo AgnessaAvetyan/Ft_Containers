@@ -1,7 +1,0 @@
-Capacity Ok (file: tests/vector/assign.cpp, line: 22)
-Size: 0 (file: tests/vector/assign.cpp, line: 22)
-
-Vector content:
-
-
-Called deallocate on null
