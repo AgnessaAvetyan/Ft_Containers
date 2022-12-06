@@ -79,37 +79,85 @@ void	printSize(ft::vector<T> const &vct, bool print_content = true)
 	std::cout << "###############################################" << std::endl;
 }
 
+
 #define TESTED_TYPE foo<int>
 
-void	is_empty(ft::vector<TESTED_TYPE> const &vct)
+template <typename Ite_1, typename Ite_2>
+void ft_eq_ope(const Ite_1 &first, const Ite_2 &second, const bool redo = 1)
 {
-	std::cout << "is_empty: " << vct.empty() << std::endl;
+	std::cout << (first < second) << std::endl;
+	std::cout << (first <= second) << std::endl;
+	std::cout << (first > second) << std::endl;
+	std::cout << (first >= second) << std::endl;
+	if (redo)
+		ft_eq_ope(second, first, 0);
 }
 
 int		main(void)
 {
-	ft::vector<TESTED_TYPE> vct(5);
-	ft::vector<TESTED_TYPE> vct2;
-	const int cut = 3;
+	const int size = 5;
+	ft::vector<TESTED_TYPE> vct(size);
+	ft::vector<TESTED_TYPE>::reverse_iterator it_0(vct.rbegin());
+	ft::vector<TESTED_TYPE>::reverse_iterator it_1(vct.rend());
+	ft::vector<TESTED_TYPE>::reverse_iterator it_mid;
 
-	for (unsigned long int i = 0; i < vct.size(); ++i)
-		vct[i] = (vct.size() - i) * 7;
-	printSize(vct);
+	ft::vector<TESTED_TYPE>::const_reverse_iterator cit_0 = vct.rbegin();
+	ft::vector<TESTED_TYPE>::const_reverse_iterator cit_1;
+	ft::vector<TESTED_TYPE>::const_reverse_iterator cit_mid;
 
-	vct2.insert(vct2.begin(), vct.begin(), vct.begin() + cut);
-	printSize(vct2);
-	vct2.insert(vct2.begin(), vct.begin() + cut, vct.end());
-	printSize(vct2);
-	vct2.insert(vct2.end(), vct.begin(), vct.begin() + cut);
-	printSize(vct2);
+	for (int i = size; it_0 != it_1; --i)
+		*it_0++ = i;
+	printSize(vct, 1);
+	it_0 = vct.rbegin();
+	cit_1 = vct.rend();
+	it_mid = it_0 + 3;
+	cit_mid = it_0 + 3;
+	cit_mid = cit_0 + 3;
+	cit_mid = it_mid;
 
-	std::cout << "insert return:" << std::endl;
+	std::cout << std::boolalpha;
+	std::cout << ((it_0 + 3 == cit_0 + 3) && (cit_0 + 3 == it_mid)) << std::endl;
 
-	std::cout << *vct2.insert(vct2.end(), 42) << std::endl;
-	std::cout << *vct2.insert(vct2.begin() + 5, 84) << std::endl;
-	std::cout << "----------------------------------------" << std::endl;
+	std::cout << "\t\tft_eq_ope:" << std::endl;
+	// regular it
+	std::cout << "******************1*****************" << std::endl;
+	ft_eq_ope(it_0 + 3, it_mid);
 
-	printSize(vct2);
+	std::cout << "******************2*****************" << std::endl;
+	ft_eq_ope(it_0, it_1);
+
+	std::cout << "******************3*****************" << std::endl;
+	ft_eq_ope(it_1 - 3, it_mid);
+
+	std::cout << "******************4*****************" << std::endl;
+	// const it
+	ft_eq_ope(cit_0 + 3, cit_mid);
+
+	std::cout << "******************5*****************" << std::endl;
+	ft_eq_ope(cit_0, cit_1);
+
+	std::cout << "******************6*****************" << std::endl;
+	ft_eq_ope(cit_1 - 3, cit_mid);
+
+	// both it
+	std::cout << "******************7*****************" << std::endl;
+	ft_eq_ope(it_0 + 3, cit_mid);
+
+	std::cout << "******************8*****************" << std::endl;
+	ft_eq_ope(it_mid, cit_0 + 3);
+
+	std::cout << "******************9*****************" << std::endl;
+	ft_eq_ope(it_0, cit_1);
+
+	std::cout << "******************10*****************" << std::endl;
+	ft_eq_ope(it_1, cit_0);
+
+	std::cout << "******************11*****************" << std::endl;
+	ft_eq_ope(it_1 - 3, cit_mid);
+
+	std::cout << "******************12*****************" << std::endl;
+	ft_eq_ope(it_mid, cit_1 - 3);
+
 	return (0);
 }
 

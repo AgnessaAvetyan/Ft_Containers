@@ -126,7 +126,7 @@ namespace ft
         friend bool operator<=(const typename vector::template RandomAccessIterator<A>& a,
                                 const typename vector::template RandomAccessIterator<B>& b)
         { return &(*a) <= &(*b); }
-    
+
     public:
         typedef T                                               value_type;
         typedef Alloc                                           allocator_type;
@@ -375,48 +375,35 @@ namespace ft
             ++m_s;
         }
 
-        void pop_back() // ok
+        void pop_back()
         {
             if (m_s == 0)
                 return ;
             m_a.destroy(m_p + m_s - 1);
             m_s--;
         }
-        
-        iterator insert (iterator position, const value_type& val) //ok
+  
+        iterator insert (iterator position, const value_type& val)
         {
             if (position < this->begin() || position > this->end()) 
                 throw std::logic_error("vector: undefined behavior");
-            difference_type start = position - begin();
-            if (m_s == m_c)
-            {
-                m_c = m_c * 2 + (m_c == 0);
-                pointer vec = m_a.allocate(m_c);
-                std::uninitialized_copy(begin(), position, iterator(vec));
-                m_a.construct(vec + start, val);
-                std::uninitialized_copy(position, end(), iterator(vec + start + 1));
-                for(size_type i = 0; i < m_s; i++)
-                    m_a.destroy(m_p + i);
-                if (m_s)
-                    m_a.deallocate(m_p, m_s);
-                m_s++;
-                m_p = vec;
-            }
-            else
-            {
-                for (size_type i = m_s; i < static_cast<size_type>(start); i--)
-                {
-                    m_a.destroy(m_p + i);
-                    m_a.construct(m_p + i, *(m_p + i - 1));
-                }
-                m_a.destroy(&(*position));
-                m_a.construct(&(*position), val);
-                m_s++;             
-            }
-            return begin() + start;
+            difference_type	n = position - this->begin();
+			this->reserve(m_s + 1);
+			position = this->begin() + n;
+			m_s++;
+			if ( position == this->end() - 1 )
+				m_a.construct( m_p + m_s - 1, val );
+			else
+			{
+				m_a.construct( m_p + m_s - 1, m_p[m_s - 2] );
+				for (iterator it = this->end() - 3; it >= position ; it-- )
+					*(it + 1) = *it;
+				*position = val;
+			}
+			return position;
         }
 
-        void insert (iterator position, size_type n, const value_type& val) //ok
+        void insert (iterator position, size_type n, const value_type& val)
         {
             if (position < this->begin() || position > this->end()) 
                 throw std::logic_error("vector: undefined behavior");
@@ -424,81 +411,52 @@ namespace ft
                 return ;
             else if (max_size() - m_s < n)
                 throw std::length_error("vector: undefined behavior");
-            difference_type beg = position - begin();
-            if (m_s + n > m_c)
-            {
-                m_c = (m_c * 2 > m_s + n ? m_c * 2 : m_s + n);
-                pointer vec = m_a.allocate(m_c);
-                std::uninitialized_copy(begin(), position, iterator(vec));
-                for (size_type i = 0; i < n; i++)
-                    m_a.construct(vec + beg + i, val);
-                std::uninitialized_copy(position, end(), iterator(vec + beg + n));
-                for(size_type i = 0; i < m_s; ++i)
-                    m_a.destroy(m_p + i);
-                if (m_c)
-                    m_a.deallocate(m_p, m_c);
-                m_p = vec;
+            difference_type	len = position - this->begin();
+			this->reserve(m_s + n);
+			position = this->begin() + len;
+			pointer	ptr = m_p + m_s;
+			for (size_type i = 0; i < n; i++)
+			{
+				m_a.construct(ptr, *(ptr - n));
+				ptr++;
+			}
+			m_s += n;
+			for (iterator it = this->end() - n - 2; it >= position ; it--)
+				*(it + n) = *it;
+			for (size_type i = 0; i < n; i++)
+			{
+				*position = val;
+				position++;
             }
-            else
-            {
-                for (size_type i = m_s; i > static_cast<size_type>(beg); i--)
-                {
-                    m_a.destroy(m_p + n + i - 1);
-                    m_a.construct(m_p + n + i - 1, *(m_p + i - 1));
-                }
-                for (size_type i = 0; i < n; i++)
-                {
-                    m_a.destroy(m_p + beg + i);
-                    m_a.construct(m_p + beg + i, val);
-                }
-            }
-            m_s += n;
         }
 
         template <typename InputIterator>
-        void insert (iterator position, InputIterator first, InputIterator last,
-                    typename enable_if<!is_integral<InputIterator>::value>::type* = 0) //don't work
+        void insert (iterator position, typename enable_if<!is_integral<InputIterator>::value,
+                        InputIterator>::type first, InputIterator last)
         {
             if (position < begin() || position > end())
                 throw std::logic_error("vector: undefined behavior");
-            size_type len = 0;
-            for (InputIterator i = first; i != last; i++)
-                len++;
-            size_type beg = static_cast<size_type>(position - begin());
-            if (m_s + len > m_c)
+            size_type count = 0;
+            for (InputIterator it = first; it != last; it++)
+                count++;
+            difference_type	n = position - this->begin();
+            this->reserve(m_s + count);
+            position = this->begin() + n;
+            pointer	ptr = m_p + m_s;
+            for (size_type i = 0; i < count; i++)
             {
-                m_c = (m_c * 2 >= m_s + len ? m_c * 2 : m_s + len);
-                pointer vec = m_a.allocate(m_c);
-                std::uninitialized_copy(begin(), position, iterator(vec));
-                for (size_type i = 0; i < static_cast<size_type>(len); i++)
-                {
-                    m_a.construct(vec + beg + i, *first);
-                    first++;
-                }
-                std::uninitialized_copy(position, end(), iterator(vec + beg + len));
-                for(size_type i = 0; i < m_s; ++i)
-                    m_a.destroy(m_p + i);
-                if (m_c)
-                    m_a.deallocate(m_p, m_c);
-                m_p = vec;
+                m_a.construct( ptr, *(ptr - count) );
+                ptr++;
             }
-            else
+            m_s += count;
+            for (iterator it = this->end() - count - 2; it >= position ; it--)
+                *(it + count) = *it;
+            for (size_type i = 0; i < count; i++)
             {
-                for (size_type i = m_s; i > static_cast<size_type>(beg); i--)
-                {
-                    m_a.destroy(m_p + len + i - 1);
-                    m_a.construct(m_p + len + i - 1, *(m_p + i - 1));
-                }
-                for (size_type i = 0; i < static_cast<size_type>(len); i++)
-                {
-                    m_a.destroy(m_p + beg + i);
-                    m_a.construct(m_p + beg + i, *first);
-                    first++;
-                }
+                *position = *first++;
+                position++;
             }
-            m_s += len;
         }
-
     }; // class vector
 
     template <class X, class A>
