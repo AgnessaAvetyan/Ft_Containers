@@ -90,9 +90,9 @@ public:
         self_left_child = node->m_child[LEFT];
         self_right_child = node->m_child[RIGHT];
 
-        other_parent = m_parent;
-        other_left_child = m_child[LEFT];
-        other_right_child = m_child[RIGHT];
+        other_parent = this->m_parent;
+        other_left_child = this->m_child[LEFT];
+        other_right_child = this->m_child[RIGHT];
 
         if(node->m_parent != NULL)
         {
@@ -118,12 +118,12 @@ public:
         {
             self_parent = node;
             self_node = NULL;
-            if(m_child[LEFT] == node)
+            if(this->m_child[LEFT] == node)
                 other_left_child = this;
             else
                 other_right_child = this;
         }
-        else if (m_parent == node)
+        else if (this->m_parent == node)
         {
             other_parent = this;
             other_node = NULL;
@@ -133,8 +133,8 @@ public:
                 self_right_child = node;
         }
 
-        m_parent = self_parent;
-        m_child[LEFT] = self_left_child;
+        this->m_parent = self_parent;
+        this->m_child[LEFT] = self_left_child;
 
         if (m_child[LEFT])
             m_child[LEFT]->m_parent = this;
@@ -159,6 +159,7 @@ public:
         node->m_color = m_color;
         m_color = color;
     }
+
 };
 
 #endif // RBTNODE_HPP
