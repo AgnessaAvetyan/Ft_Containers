@@ -2,6 +2,8 @@
 #define RBTREE_HPP
 #include "RBTNode.hpp"
 
+namespace ft
+{
 class RBTree
 {
 private:
@@ -31,7 +33,7 @@ private:
             m_root = sibling;
     }
 
-    void balance_after_insert(RBTNode* node, RBTNode* parent)
+    void    balance_after_insert(RBTNode* node, RBTNode* parent)
     {
         RBTNode* grandparent = parent->get_parent();
         RBTNode* uncle = parent->get_sibling();
@@ -74,7 +76,7 @@ private:
         } while (parent != NULL);   
     }
     
-    void distant_nephew_rebalance(RBTNode* parent, RBTNode* sibling, RBTNode* distant_nephew, bool pos)
+    void    distant_nephew_rebalance(RBTNode* parent, RBTNode* sibling, RBTNode* distant_nephew, bool pos)
     {
         rotate_subtree(parent, pos);
         parent->set_color(BLACK);
@@ -82,7 +84,7 @@ private:
         sibling->set_color(parent->get_color());
     }
 
-    void close_nephew_rebalance(RBTNode* parent, RBTNode* sibling, RBTNode* close_nephew, RBTNode* distant_nephew, bool pos)
+    void    close_nephew_rebalance(RBTNode* parent, RBTNode* sibling, RBTNode* close_nephew, RBTNode* distant_nephew, bool pos)
     {
         rotate_subtree(sibling, 1 - pos);
         close_nephew->set_color(BLACK);
@@ -92,7 +94,7 @@ private:
         distant_nephew_rebalance(parent, sibling, distant_nephew, pos);
     }
 
-    void sibling_rebalance(RBTNode* parent, RBTNode* sibling, RBTNode* close_nephew, RBTNode* distant_nephew, bool pos)
+    void    sibling_rebalance(RBTNode* parent, RBTNode* sibling, RBTNode* close_nephew, RBTNode* distant_nephew, bool pos)
     {
         rotate_subtree(parent, pos);
         parent->set_color(RED);
@@ -115,7 +117,7 @@ private:
         sibling->set_color(RED);
     }
 
-    void delete_black_leaf(RBTNode* node, RBTNode* parent)
+    void    delete_black_leaf(RBTNode* node, RBTNode* parent)
     {
         bool        pos = node->get_position();
         RBTNode*    sibling = parent->get_child(1 - pos);
@@ -220,6 +222,6 @@ public:
     }
     ~RBTree();
 };
-
+} // namespace ft
 
 #endif // RBTREE_HPP

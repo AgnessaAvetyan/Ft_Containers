@@ -166,7 +166,7 @@
 
 int main()
 {
-	RBTree* node;
+	ft::RBTree* node;
     (void) node;
 	// node->right_rotate_subtree();
 }

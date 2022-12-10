@@ -1,9 +1,12 @@
 #ifndef RBTNODE_HPP
 #define RBTNODE_HPP
-#define RED 1
-#define BLACK 0
-#define LEFT 0
-#define RIGHT 1
+
+namespace ft
+{
+#define RED     1
+#define BLACK   0
+#define LEFT    0
+#define RIGHT   1
 #include <cstddef>
 
 class RBTNode
@@ -159,7 +162,7 @@ public:
         node->m_color = m_color;
         m_color = color;
     }
-
 };
+} // namespace ft
 
 #endif // RBTNODE_HPP
