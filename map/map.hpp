@@ -38,15 +38,13 @@ public:
             bool operator() (const value_type& x, const value_type& y) const
                 { return comp(x.first, y.first); }
     };
-    
 private:
     size_type       m_size;
     RBTree          rb_tree;
     key_compare     m_compare;
     allocator_type  m_alloc;
-
     typedef typename allocator_type::template rebind<RBTNode>::other allocate_rbtnode_type;
-        allocate_rbtnode_type allocate_node;
+    allocate_rbtnode_type allocate_node;
 private:
     // helper functions
     pair<iterator, bool> search_insert(RBTNode* node, value_type* pair)
@@ -102,6 +100,12 @@ public:
             this->insert(*it);
         m_size = x.m_size;
     }
+    ~map() { this->clear(); }
+
+    // Capacity
+    bool empty() const {return m_size == 0 ? true : false; }
+    size_type size() const { return m_size; }
+    size_type max_size() const { m_alloc.max_size(); }
 
     //Iterators
     iterator begin() 
@@ -251,11 +255,72 @@ public:
         m_compare = compare;
     }
 
-    ~map() { this->clear(); }
+    // Element access
+    mapped_type& operator[] (const key_type& k)
+    {
+        RBTNode*    cur_node = rb_tree.get_root();
+        RBTNode*    child;
+        value_type* cur_pair;
 
+        while (cur_node)
+        {
+            cur_pair = cur_node->get_value();
+            if (m_compare(k, cur_pair->first))
+                child = cur_node->get_child(LEFT);
+            else if (m_compare(cur_pair->first, k))
+                child = cur_node->get_child(RIGHT);
+            else
+                return cur_pair->second;
+            cur_node = child;
+        }
+        pair<iterator, bool> new_node = this->insert(ft::make_pair(k, mapped_type()));
+        return new_node.first->second;
+    }
+    mapped_type& at (const key_type& k)
+    {
+        RBTNode*    cur_node = rb_tree.get_root();
+        RBTNode*    child;
+        value_type* cur_pair;
 
+        while (cur_node)
+        {
+            cur_pair = cur_node->get_value();
+            if (m_compare(k, cur_pair->first))
+                child = cur_node->get_child(LEFT);
+            else if (m_compare(cur_pair->first, k))
+                child = cur_node->get_child(RIGHT);
+            else
+                return cur_pair->second;
+            cur_node = child;
+        }
+        throw std::out_of_range("map: at()");
+    }
+    const mapped_type& at (const key_type& k) const
+    {
+        RBTNode*    cur_node = rb_tree.get_root();
+        RBTNode*    child;
+        value_type* cur_pair;
 
-
+        while (cur_node)
+        {
+            cur_pair = cur_node->get_value();
+            if (m_compare(k, cur_pair->first))
+                child = cur_node->get_child(LEFT);
+            else if (m_compare(cur_pair->first, k))
+                child = cur_node->get_child(RIGHT);
+            else
+                return cur_pair->second;
+            cur_node = child;
+        }
+        throw std::out_of_range("map: at()");
+    }
+    // Observers
+    key_compare key_comp() const { return m_compare; }
+    value_compare value_comp() const
+    {
+        value_compare val_comp(m_compare);
+        return val_comp;
+    }
 
 };
 } // namespace ft
