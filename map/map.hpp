@@ -62,6 +62,39 @@ public:
     }
     ~map() { this->clear(); }
 
+    // Capacity
+    bool empty() const {return m_size == 0 ? true : false; }
+    size_type size() const { return m_size; }
+    size_type max_size() const { m_alloc.max_size(); }
+
+    // Element access
+    mapped_type& operator[] (const key_type& k)
+    {
+        RBTNode*    cur_node = rb_tree.get_root();
+        RBTNode*    child;
+        value_type* cur_pair;
+
+        while (cur_node)
+        {
+            cur_pair = cur_node->get_value();
+            if (m_compare(k, cur_pair->first))
+                child = cur_node->get_child(LEFT);
+            else if (m_compare(cur_pair->first, k))
+                child = cur_node->get_child(RIGHT);
+            else
+                return cur_pair->second;
+            cur_node = child;
+        }
+        pair<iterator, bool> new_node = this->insert(ft::make_pair(k, mapped_type()));
+        return new_node.first->second;
+    }
+    mapped_type& at (const key_type& k)
+    {
+        
+    }
+    const mapped_type& at (const key_type& k) const;
+
+
 
 
 
