@@ -32,6 +32,35 @@ private:
     key_compare     m_compare;
     allocator_type  m_alloc;
 
+    typedef typename allocator_type::template rebind<RBTNode>::other allocate_rbtnode_type;
+        allocate_rbtnode_type allocate_node;
+private:
+    // helper functions
+    pair<iterator, bool> search_insert(RBTNode* node, value_type* pair)
+    {
+
+    }
+
+    iterator insert_iterator(iterator pos, RBTNode* node, value_type* pair)
+    {
+
+    }
+
+    size_type serach_erase(const key_type& key)
+    {
+
+    }
+
+    void delete_one_node(RBTNode* node)
+    {
+
+    }
+
+    void deep_clear(RBTNode* node)
+    {
+        
+    }
+
 public:
     // ctors and dtor
     explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
@@ -116,6 +145,97 @@ public:
         const_reverse_iterator rev_const_it(const_it);
 
         return (rev_const_it);
+    }
+
+    //Modifiers
+    pair<iterator,bool> insert (const value_type& val)
+    {
+        RBTNode*    node;
+        value_type  pair;
+
+        pair = m_alloc.allocate(1);
+        m_alloc.construct(pair, val);
+        node = allocate_node.allocate(1);
+        allocate_node.construct(node, pair);
+
+        return (this->search_insert(node, pair));
+    }
+
+    iterator insert (iterator position, const value_type& val)
+    {
+        RBTNode*    node;
+        value_type  pair;
+
+        pair = m_alloc.allocate(1);
+        m_alloc.construct(pair, val);
+        node = allocate_node.allocate(1);
+        allocate_node.construct(node, pair);
+
+        return (this->insert_iterator(position, node, pair));
+    }
+
+    template <class InputIterator>  void insert (InputIterator first, InputIterator last)
+    {
+        for(; first != last; first++)
+            this->insert(*first);
+    }
+
+    void erase (iterator position)
+    {
+        RBTNode*    node;
+
+        node = position.get_node();
+        rb_tree.deletion(node);
+        m_size--;
+
+        return (delete_one_node(node));
+    }
+
+    size_type erase (const key_type& key)
+    {
+        return (this->serach_erase(key));
+    }
+
+    void erase (iterator first, iterator last)
+    {
+        iterator it;
+
+        while (first != last)
+        {
+            it = first;
+            ++first;
+            this->erase(it);
+        }
+    }
+
+    void clear(void)
+    {
+        RBTNode* node;
+
+        node = rb_tree.get_root();
+        if (node)
+            this->deep_clear(node);
+        rb_tree.set_root_Null();
+        m_size = 0;
+    }
+
+    void swap (map& x)
+    {
+        size_type       size;
+        RBTree          rbtree;
+        key_compare     compare;
+
+        size = x.m_size;
+        x.m_size = m_size;
+        m_size = size;
+
+        rbtree = x.rb_tree;
+        x.rb_tree = rb_tree;
+        rb_tree = rbtree;
+
+        compare = x.m_compare;
+        x.m_compare = m_compare;
+        m_compare = compare;
     }
 
     ~map() { this->clear(); }

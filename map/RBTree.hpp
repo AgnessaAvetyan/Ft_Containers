@@ -159,6 +159,7 @@ private:
 public:
     RBTree() : m_root(NULL) {}
     RBTNode*    get_root() const { return m_root; }
+    void        set_root_Null() { m_root = NULL; }
     void        set_root(RBTNode* root) { m_root = root; }
     void        insertion(RBTNode* node, RBTNode *parent, bool pos)
     {
@@ -234,7 +235,6 @@ public:
         return leaf;
         
     }
-    
     ~RBTree();
 };
 } // namespace ft
