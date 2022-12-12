@@ -45,6 +45,35 @@ private:
     key_compare     m_compare;
     allocator_type  m_alloc;
 
+    typedef typename allocator_type::template rebind<RBTNode>::other allocate_rbtnode_type;
+        allocate_rbtnode_type allocate_node;
+private:
+    // helper functions
+    pair<iterator, bool> search_insert(RBTNode* node, value_type* pair)
+    {
+
+    }
+
+    iterator insert_iterator(iterator pos, RBTNode* node, value_type* pair)
+    {
+
+    }
+
+    size_type serach_erase(const key_type& key)
+    {
+
+    }
+
+    void delete_one_node(RBTNode* node)
+    {
+
+    }
+
+    void deep_clear(RBTNode* node)
+    {
+        
+    }
+
 public:
     // ctors and dtor
     explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
@@ -73,79 +102,160 @@ public:
             this->insert(*it);
         m_size = x.m_size;
     }
+
+    //Iterators
+    iterator begin() 
+        { return iterator(rb_tree.get_leaf(LEFT), this); }
+
+    const_iterator begin() const 
+        { return const_iterator(rb_tree.get_leaf(LEFT), (void*)this); }
+
+    reverse_iterator rbegin() 
+    {
+        iterator it = this->end();
+        reverse_iterator rev_it(it);
+
+        return (rev_it);
+    }
+
+    const_reverse_iterator rbegin() const 
+    {
+        const_iterator const_it = this->end();
+        const_reverse_iterator rev_const_it(const_it);
+
+        return (rev_const_it);
+    }
+
+    iterator end() 
+    {
+        iterator it(rb_tree.get_leaf(RIGHT), this);
+
+        if(it)
+            ++it;
+        return (it);
+    }
+
+    const_iterator end() const 
+    {
+        const_iterator it(rb_tree.get_leaf(RIGHT), this);
+
+        if(it)
+            ++it;
+        return (it);
+    }
+
+    reverse_iterator rend() 
+    {
+        iterator it = this->begin();
+        reverse_iterator rev_it(it);
+
+        return (rev_it);
+    }
+
+    const_reverse_iterator rend() const
+    {
+        const_iterator const_it = this->begin();
+        const_reverse_iterator rev_const_it(const_it);
+
+        return (rev_const_it);
+    }
+
+    //Modifiers
+    pair<iterator,bool> insert (const value_type& val)
+    {
+        RBTNode*    node;
+        value_type  pair;
+
+        pair = m_alloc.allocate(1);
+        m_alloc.construct(pair, val);
+        node = allocate_node.allocate(1);
+        allocate_node.construct(node, pair);
+
+        return (this->search_insert(node, pair));
+    }
+
+    iterator insert (iterator position, const value_type& val)
+    {
+        RBTNode*    node;
+        value_type  pair;
+
+        pair = m_alloc.allocate(1);
+        m_alloc.construct(pair, val);
+        node = allocate_node.allocate(1);
+        allocate_node.construct(node, pair);
+
+        return (this->insert_iterator(position, node, pair));
+    }
+
+    template <class InputIterator>  void insert (InputIterator first, InputIterator last)
+    {
+        for(; first != last; first++)
+            this->insert(*first);
+    }
+
+    void erase (iterator position)
+    {
+        RBTNode*    node;
+
+        node = position.get_node();
+        rb_tree.deletion(node);
+        m_size--;
+
+        return (delete_one_node(node));
+    }
+
+    size_type erase (const key_type& key)
+    {
+        return (this->serach_erase(key));
+    }
+
+    void erase (iterator first, iterator last)
+    {
+        iterator it;
+
+        while (first != last)
+        {
+            it = first;
+            ++first;
+            this->erase(it);
+        }
+    }
+
+    void clear(void)
+    {
+        RBTNode* node;
+
+        node = rb_tree.get_root();
+        if (node)
+            this->deep_clear(node);
+        rb_tree.set_root_Null();
+        m_size = 0;
+    }
+
+    void swap (map& x)
+    {
+        size_type       size;
+        RBTree          rbtree;
+        key_compare     compare;
+
+        size = x.m_size;
+        x.m_size = m_size;
+        m_size = size;
+
+        rbtree = x.rb_tree;
+        x.rb_tree = rb_tree;
+        rb_tree = rbtree;
+
+        compare = x.m_compare;
+        x.m_compare = m_compare;
+        m_compare = compare;
+    }
+
     ~map() { this->clear(); }
 
-    // Capacity
-    bool empty() const {return m_size == 0 ? true : false; }
-    size_type size() const { return m_size; }
-    size_type max_size() const { m_alloc.max_size(); }
 
-    // Element access
-    mapped_type& operator[] (const key_type& k)
-    {
-        RBTNode*    cur_node = rb_tree.get_root();
-        RBTNode*    child;
-        value_type* cur_pair;
 
-        while (cur_node)
-        {
-            cur_pair = cur_node->get_value();
-            if (m_compare(k, cur_pair->first))
-                child = cur_node->get_child(LEFT);
-            else if (m_compare(cur_pair->first, k))
-                child = cur_node->get_child(RIGHT);
-            else
-                return cur_pair->second;
-            cur_node = child;
-        }
-        pair<iterator, bool> new_node = this->insert(ft::make_pair(k, mapped_type()));
-        return new_node.first->second;
-    }
-    mapped_type& at (const key_type& k)
-    {
-        RBTNode*    cur_node = rb_tree.get_root();
-        RBTNode*    child;
-        value_type* cur_pair;
 
-        while (cur_node)
-        {
-            cur_pair = cur_node->get_value();
-            if (m_compare(k, cur_pair->first))
-                child = cur_node->get_child(LEFT);
-            else if (m_compare(cur_pair->first, k))
-                child = cur_node->get_child(RIGHT);
-            else
-                return cur_pair->second;
-            cur_node = child;
-        }
-        throw std::out_of_range("map: at()");
-    }
-    const mapped_type& at (const key_type& k) const
-    {
-        RBTNode*    cur_node = rb_tree.get_root();
-        RBTNode*    child;
-        value_type* cur_pair;
-
-        while (cur_node)
-        {
-            cur_pair = cur_node->get_value();
-            if (m_compare(k, cur_pair->first))
-                child = cur_node->get_child(LEFT);
-            else if (m_compare(cur_pair->first, k))
-                child = cur_node->get_child(RIGHT);
-            else
-                return cur_pair->second;
-            cur_node = child;
-        }
-        throw std::out_of_range("map: at()");
-    }
-    // Observers
-    key_compare key_comp() const { return m_compare; }
-    value_compare value_comp() const
-    {
-        value_compare val_comp(m_compare);
-        return val_comp;
-    }
 
 };
 } // namespace ft
