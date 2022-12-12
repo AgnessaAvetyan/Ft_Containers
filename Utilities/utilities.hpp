@@ -1,6 +1,8 @@
 #ifndef UTILITIES_HPP
 #define UTILITIES_HPP
 
+#include <functional>
+
 #include "reverse_iterator.hpp"
 #include "enable_if.hpp"
 #include "equal.hpp"

@@ -23,9 +23,22 @@ public:
     typedef typename allocator_type::const_pointer&     const_pointer;
     typedef map_iterator<value_type>                    iterator;
     typedef map_iterator<const value_type>              const_iterator;
-    typedef reverse_iterator<iterator>                  reverse_iterator;
     typedef reverse_iterator<const_iterator>            const_reverse_iterator;
-
+    typedef reverse_iterator<iterator>                  reverse_iterator;
+    class   value_compare : std::binary_function<value_type,value_type, bool>
+    {
+        public:
+            typedef bool        result_type;
+            typedef value_type  first_argument_type;
+            typedef value_type  second_argument_type;
+        private:
+            key_compare m_comp;
+        public:
+            value_compare (key_compare c) : m_comp(c) {}
+            bool operator() (const value_type& x, const value_type& y) const
+                { return comp(x.first, y.first); }
+    };
+    
 private:
     size_type       m_size;
     RBTree          rb_tree;
@@ -90,14 +103,49 @@ public:
     }
     mapped_type& at (const key_type& k)
     {
-        
+        RBTNode*    cur_node = rb_tree.get_root();
+        RBTNode*    child;
+        value_type* cur_pair;
+
+        while (cur_node)
+        {
+            cur_pair = cur_node->get_value();
+            if (m_compare(k, cur_pair->first))
+                child = cur_node->get_child(LEFT);
+            else if (m_compare(cur_pair->first, k))
+                child = cur_node->get_child(RIGHT);
+            else
+                return cur_pair->second;
+            cur_node = child;
+        }
+        throw std::out_of_range("map: at()");
     }
-    const mapped_type& at (const key_type& k) const;
+    const mapped_type& at (const key_type& k) const
+    {
+        RBTNode*    cur_node = rb_tree.get_root();
+        RBTNode*    child;
+        value_type* cur_pair;
 
-
-
-
-
+        while (cur_node)
+        {
+            cur_pair = cur_node->get_value();
+            if (m_compare(k, cur_pair->first))
+                child = cur_node->get_child(LEFT);
+            else if (m_compare(cur_pair->first, k))
+                child = cur_node->get_child(RIGHT);
+            else
+                return cur_pair->second;
+            cur_node = child;
+        }
+        throw std::out_of_range("map: at()");
+    }
+    // Observers
+    key_compare key_comp() const { return m_compare; }
+    value_compare value_comp() const
+    {
+        value_compare val_comp(m_compare);
+        return val_comp;
+    }
 
 };
 } // namespace ft

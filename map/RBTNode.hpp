@@ -1,5 +1,6 @@
 #ifndef RBTNODE_HPP
 #define RBTNODE_HPP
+#include "../Utilities/utilities.hpp"
 
 namespace ft
 {
@@ -78,25 +79,17 @@ public:
 
     void    nodes_swap(RBTNode* node, RBTNode** root)
     {
-        RBTNode** self_node;
-        RBTNode* self_parent;
-        RBTNode* self_left_child;
-        RBTNode* self_right_child;
+        RBTNode**   self_node;
+        RBTNode*    self_parent = node->m_parent;
+        RBTNode*    self_right_child = node->m_child[RIGHT];
+        RBTNode*    self_left_child = node->m_child[LEFT];
 
-        RBTNode** other_node;
-        RBTNode* other_parent;
-        RBTNode* other_left_child;
-        RBTNode* other_right_child;
+        RBTNode**   other_node;
+        RBTNode*    other_parent = this->m_parent;
+        RBTNode*    other_left_child = this->m_child[LEFT];
+        RBTNode*    other_right_child = this->m_child[RIGHT];
         bool color;
-
-        self_parent = node->m_parent;
-        self_left_child = node->m_child[LEFT];
-        self_right_child = node->m_child[RIGHT];
-
-        other_parent = this->m_parent;
-        other_left_child = this->m_child[LEFT];
-        other_right_child = this->m_child[RIGHT];
-
+        
         if(node->m_parent != NULL)
         {
             if(node->m_parent->get_position() == LEFT)
@@ -152,7 +145,7 @@ public:
 
         if (node->m_child[LEFT])
             node->m_child[LEFT]->m_parent = node;
-        node->m_child[RIGHT] = self_right_child;
+        node->m_child[RIGHT] = other_right_child;
         if (node->m_child[RIGHT])
             node->m_child[RIGHT]->m_parent = node;
         if (other_node)
