@@ -46,7 +46,7 @@ private:
     typedef typename allocator_type::template rebind<RBTNode>::other allocate_rbtnode_type;
     allocate_rbtnode_type allocate_node;
 private:
-    // helper functions
+    //  helper functions
     pair<iterator, bool> search_insert(RBTNode* node, value_type* pair)
     {
 
@@ -108,11 +108,9 @@ public:
     size_type max_size() const { m_alloc.max_size(); }
 
     //Iterators
-    iterator begin() 
-        { return iterator(rb_tree.get_leaf(LEFT), this); }
+    iterator begin()  { return iterator(rb_tree.get_leaf(LEFT), this); }
 
-    const_iterator begin() const 
-        { return const_iterator(rb_tree.get_leaf(LEFT), (void*)this); }
+    const_iterator begin() const  { return const_iterator(rb_tree.get_leaf(LEFT), (void*)this); }
 
     reverse_iterator rbegin() 
     {
@@ -191,7 +189,8 @@ public:
         return (this->insert_iterator(position, node, pair));
     }
 
-    template <class InputIterator>  void insert (InputIterator first, InputIterator last)
+    template <class InputIterator>
+    void insert (InputIterator first, InputIterator last)
     {
         for(; first != last; first++)
             this->insert(*first);
@@ -314,7 +313,7 @@ public:
         }
         throw std::out_of_range("map: at()");
     }
-    // Observers
+    //  Observers
     key_compare key_comp() const { return m_compare; }
     value_compare value_comp() const
     {
@@ -322,6 +321,69 @@ public:
         return val_comp;
     }
 
+    //  Operations
+    iterator find (const key_type& k)
+    {
+        RBTNode*    cur_node = rb_tree.get_root();
+        value_type* cur_pair;
+
+        while (cur_node)
+        {
+            cur_pair = cur_node->get_value();
+            if (m_compare(k, cur_pair->first))
+                cur_node = cur_node->get_child(LEFT);
+            else if (m_compare(cur_pair->first, k))
+                cur_node = cur_node->get_child(RIGHT);
+            else
+            {
+                iterator it(cur_node, this);
+                return it;
+            }
+        }
+        return this->end();
+    }
+
+    const_iterator find (const key_type& k) const
+    {
+        RBTNode*    cur_node = rb_tree.get_root();
+        value_type* cur_pair;
+
+        while (cur_node)
+        {
+            cur_pair = cur_node->get_value();
+            if (m_compare(k, cur_pair->first))
+                cur_node = cur_node->get_child(LEFT);
+            else if (m_compare(cur_pair->first, k))
+                cur_node = cur_node->get_child(RIGHT);
+            else
+            {
+                const_iterator it(cur_node, this);
+                return it;
+            }
+        }
+        return this->end();
+    }
+
+    size_type count (const key_type& k) const
+    {
+        RBTNode*    cur_node = rb_tree.get_root();
+        value_type* cur_pair;
+
+        while (cur_node)
+        {
+            cur_pair = cur_node->get_value();
+            if (m_compare(k, cur_pair->first))
+                cur_node = cur_node->get_child(LEFT);
+            else if (m_compare(cur_pair->first, k))
+                cur_node = cur_node->get_child(RIGHT);
+            else
+                return 1;
+        }
+        return 0;
+    }
+
+    //  Allocator
+    allocator_type get_allocator() const { return m_alloc; }
 };
 } // namespace ft
 #endif // MAP_HPP

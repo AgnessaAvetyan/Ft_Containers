@@ -24,11 +24,11 @@ namespace ft
         map_iterator() : m_node(NULL), m_last_node(NULL), m_map(NULL){}
         map_iterator(RBTNode* node_p, void* map_p)
             : m_node(node_p), m_last_node(NULL), m_map(map_p){}
-        map_iterator(const map_iterator& map_it)
-            { *this = map_it; }
+        map_iterator(const map_iterator& map_it) { *this = map_it; }
+
         template <typename I>
-        map_iterator(const map_iterator<I, false>& map_it)
-            { *this = map_it; }
+        map_iterator(const map_iterator<I, false>& map_it) { *this = map_it; }
+        
         map_iterator& operator=(const map_iterator& map_it)
         {
             if (this == &map_it)
