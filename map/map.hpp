@@ -60,12 +60,65 @@ public:
             this->insert(*it);
         m_size = x.m_size;
     }
+
+    //Iterators
+    iterator begin() 
+        { return iterator(rb_tree.get_leaf(LEFT), this); }
+
+    const_iterator begin() const 
+        { return const_iterator(rb_tree.get_leaf(LEFT), (void*)this); }
+
+    reverse_iterator rbegin() 
+    {
+        iterator it = this->end();
+        reverse_iterator rev_it(it);
+
+        return (rev_it);
+    }
+
+    const_reverse_iterator rbegin() const 
+    {
+        const_iterator const_it = this->end();
+        const_reverse_iterator rev_const_it(const_it);
+
+        return (rev_const_it);
+    }
+
+    iterator end() 
+    {
+        iterator it(rb_tree.get_leaf(RIGHT), this);
+
+        if(it)
+            ++it;
+        return (it);
+    }
+
+    const_iterator end() const 
+    {
+        const_iterator it(rb_tree.get_leaf(RIGHT), this);
+
+        if(it)
+            ++it;
+        return (it);
+    }
+
+    reverse_iterator rend() 
+    {
+        iterator it = this->begin();
+        reverse_iterator rev_it(it);
+
+        return (rev_it);
+    }
+
+    const_reverse_iterator rend() const
+    {
+        const_iterator const_it = this->begin();
+        const_reverse_iterator rev_const_it(const_it);
+
+        return (rev_const_it);
+    }
+
     ~map() { this->clear(); }
-
-
-
-
-
 };
 } // namespace ft
 #endif // MAP_HPP
