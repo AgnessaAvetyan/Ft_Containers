@@ -162,11 +162,11 @@
 // }
 
 
-#include "map/RBTree.hpp"
+#include "map/map.hpp"
 
 int main()
 {
-	ft::RBTree* node;
+	ft::map<int, int>* node;
     (void) node;
 	// node->right_rotate_subtree();
 }

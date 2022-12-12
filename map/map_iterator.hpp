@@ -8,27 +8,28 @@ namespace ft
     class map_iterator
     {
     public:
-        typedef std::bidirectional_iterator_tag     iterator_category;
-        typedef std::size_t                         size_type;
-        typedef std::ptrdiff_t                      difference_type;
-        typedef typename is_const<T, constness>     value_type;
-        typedef typename is_const<T, constness>*    pointer;
-        typedef typename is_const<T, constness>&    reference;
+        typedef std::bidirectional_iterator_tag         iterator_category;
+        typedef std::size_t                             size_type;
+        typedef std::ptrdiff_t                          difference_type;
+        typedef typename is_const<T, constness>::type   value_type;
+        typedef typename is_const<T, constness>::type*  pointer;
+        typedef typename is_const<T, constness>::type&  reference;
 
     private:
         RBTNode*    m_node;
         RBTNode*    m_last_node;
         void*       m_map;
+
     public:
         map_iterator() : m_node(NULL), m_last_node(NULL), m_map(NULL){}
         map_iterator(RBTNode* node_p, void* map_p)
-            : m_node(NULL), m_last_node(NULL), m_map(map_p){}
+            : m_node(node_p), m_last_node(NULL), m_map(map_p){}
         map_iterator(const map_iterator& map_it)
             { *this = map_it; }
         template <typename I>
         map_iterator(const map_iterator<I, false>& map_it)
             { *this = map_it; }
-        map_iterator<I, constness> operator=(const map_iterator& map_it)
+        map_iterator& operator=(const map_iterator& map_it)
         {
             if (this == &map_it)
                 return *this;
@@ -37,7 +38,8 @@ namespace ft
             m_map = map_it.m_map;
             return *this;
         }
-        map_iterator<I, constness> operator=(const map_iterator<I, false>& map_it)
+        template<typename I>
+        map_iterator<I, constness>& operator=(const map_iterator<I, false>& map_it)
         {
             m_node = map_it.get_node();
             m_last_node = map_it.get_last_node();
@@ -98,6 +100,7 @@ namespace ft
         ~map_iterator(){}
         
     }; // map_iterator
+
 } // namespace ft
 
 

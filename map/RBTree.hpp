@@ -220,6 +220,20 @@ public:
         }
         this->delete_black_leaf(node, parent);
     }
+    RBTNode*    get_leaf(bool pos) const
+    {
+        if (m_root == NULL)
+            return NULL;
+        RBTNode* leaf = m_root;
+        RBTNode* child = leaf->get_child(pos);
+        while (child)
+        {
+            leaf = child;
+            child = leaf->get_child(pos);
+        }
+        return leaf;
+        
+    }
     ~RBTree();
 };
 } // namespace ft
