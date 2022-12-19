@@ -21,13 +21,15 @@ namespace ft
         first_type first;
         second_type second;
 
-        pair() : first(), second() {}
+        pair() : first(first_type()), second(second_type()) {}
         template <class U, class V>
         pair(const pair<U, V> &pr) : first(pr.first), second(pr.second) {}
         pair(const pair &pr) : first(pr.first), second(pr.second) {}
         pair(const first_type &a, const second_type &b) : first(a), second(b) {}
         pair &operator=(const pair &pr)
         {
+            if (this == &pr)
+                return *this;
             this->first = pr.first;
             this->second = pr.second;
             return *this;
@@ -70,6 +72,9 @@ namespace ft
         ft::swap(x.first, y.first);
         ft::swap(x.second, y.second); 
     }
+    template <class T1, class T2>
+    pair<T1,T2> make_pair (T1 x, T2 y)
+    { return pair<T1, T2>(x, y); }
 } // namespace ft
 
 #endif // PAIR_HPP

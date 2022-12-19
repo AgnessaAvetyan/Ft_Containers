@@ -25,18 +25,15 @@ namespace ft
             m_c = stk.m_c;
             return *this;
         }
-        bool empty() const
-            { return m_c.empty(); }
-        size_type size() const
-            { return m_c.size(); }
-        value_type& top()
-            { return m_c.back(); }
-        const value_type& top() const
-            { return m_c.back(); }
-        void push (const value_type& val)
-            { m_c.push_back(val); }
-        void pop()
-            { m_c.pop_back(); }
+
+        bool empty() const { return m_c.empty(); }
+        size_type size() const { return m_c.size(); }
+
+        value_type& top() { return m_c.back(); }
+        const value_type& top() const { return m_c.back(); }
+
+        void push (const value_type& val) { m_c.push_back(val); }
+        void pop() { m_c.pop_back(); }
 
         template <class A, class Cont>
         friend bool operator== (const stack<A, Cont>& lhs, const stack<A, Cont>& rhs)

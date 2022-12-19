@@ -1,59 +1,59 @@
 #ifndef VECTOR_HPP
 #define VECTOR_HPP
-#include "../Utilities/utilities.hpp"
+#include "../../Utilities/utilities.hpp"
 
 namespace ft
 {
     template < class T, class Alloc = std::allocator<T> >
     class vector
     {
-        template <typename It>
+        template <bool is_const>
         class RandomAccessIterator
         {
         public:
-            typedef typename iterator_traits<It*>::difference_type  difference_type;
-            typedef typename iterator_traits<It*>::value_type       value_type;
-            typedef typename iterator_traits<It*>::reference        reference;
-            typedef typename iterator_traits<It*>::pointer          pointer;
-            typedef pointer                                         iterator_type;
-            typedef std::random_access_iterator_tag                 iterator_category;
-
+            typedef std::ptrdiff_t  difference_type;
+            typedef typename ft::conditional<is_const, const T, T>::type       value_type;
+            typedef std::size_t size_type;
         private:
-            pointer m_p;
+            value_type* m_p;
 
         public:
-            RandomAccessIterator() : m_p() {}
-            RandomAccessIterator(pointer p) : m_p(p) {}
-            RandomAccessIterator(const RandomAccessIterator<typename remove_const<value_type>::type>& p) : m_p(&(*p)) {}
-            RandomAccessIterator& operator=(RandomAccessIterator<typename remove_const<value_type>::type> const& p)
+            RandomAccessIterator() : m_p(NULL) {}
+            RandomAccessIterator(value_type* const p) : m_p(p) {}
+            template <bool B>
+            RandomAccessIterator(const RandomAccessIterator<B>& p, typename ft::enable_if<!B>::type* = 0) { m_p = p.get_pointer(); }
+            RandomAccessIterator& operator=(RandomAccessIterator<is_const> const& p)
             {
-                m_p = &(*p);
+                m_p = p.get_pointer();
                 return *this;
             }
             RandomAccessIterator& operator++()
             {
-                ++m_p;
+                m_p++;
                 return *this;
             }
             RandomAccessIterator& operator--()
             {
-                --m_p;
+                m_p--;
                 return *this;
             }
             RandomAccessIterator operator++(int)
             {
-                RandomAccessIterator temp(*this);
-                ++m_p;
+                RandomAccessIterator<is_const> temp(*this);
+                m_p++;
                 return temp;
             }
             RandomAccessIterator operator--(int)
             {
-                RandomAccessIterator temp(*this);
-                --m_p;
+                RandomAccessIterator<is_const> temp(*this);
+                m_p--;
                 return temp;
             }
-            RandomAccessIterator operator+(const difference_type& it) const { return m_p + it; }
-            RandomAccessIterator operator-(const difference_type& it) const { return m_p - it; }
+
+            RandomAccessIterator    operator+(int it) const { return m_p + it; }
+            RandomAccessIterator    operator-(int it) const { return m_p - it; }
+            difference_type         operator-(const RandomAccessIterator& it) const { return m_p - it.get_pointer(); }
+
             RandomAccessIterator& operator+=(const difference_type& it)
             {
                 m_p += it;
@@ -64,82 +64,43 @@ namespace ft
                 m_p -= it;
                 return *this;
             }
-            pointer operator->() const { return m_p; }
-            reference operator*() const { return *m_p; }
-            reference operator[](difference_type n) const { return *(m_p + n); }
-            virtual ~RandomAccessIterator(){}
 
-        }; // class RandomAccessIterator
+            value_type* operator->() const { return m_p; }
+            value_type& operator*() const { return *m_p; }
+            value_type& operator[](size_type n) const { return *(m_p + n); }
 
-        template<typename A>
-        friend vector::template RandomAccessIterator<A>
-        operator+(const typename vector::template RandomAccessIterator<A>::difference_type& a,
-                    const typename vector::template RandomAccessIterator<A>& b)
-        {
-            RandomAccessIterator<A> tmp(b);
-            return tmp += a;
-        }
-        template<typename A>
-        friend vector::template RandomAccessIterator<A>
-        operator-(const typename vector::template RandomAccessIterator<A>::difference_type& a,
-                    const typename vector::template RandomAccessIterator<A>::difference_type& b)
-        { return b - a; }
+            value_type* get_pointer() const { return m_p; }
 
-        template<typename A, typename B>
-        friend typename vector::template RandomAccessIterator<A>::difference_type
-        operator+(const vector::template RandomAccessIterator<A>& a,
-                    const vector::template RandomAccessIterator<B>& b)
-        { return &(*a) + &(*b); }
+            template <bool B>
+            bool operator==(const RandomAccessIterator<B>& it) const { return m_p == it.get_pointer(); }
+            template <bool B>
+            bool operator!=(const RandomAccessIterator<B>& it) const { return m_p != it.get_pointer(); }
+            template <bool B>
+            bool operator<(const RandomAccessIterator<B>& it) const { return m_p < it.get_pointer(); }
+            template <bool B>
+            bool operator>(const RandomAccessIterator<B>& it) const { return m_p > it.get_pointer(); }
+            template <bool B>
+            bool operator>=(const RandomAccessIterator<B>& it) const { return m_p >= it.get_pointer(); }
+            template <bool B>
+            bool operator<=(const RandomAccessIterator<B>& it) const { return m_p <= it.get_pointer(); }
 
-        template<typename A, typename B>
-        friend typename vector::template RandomAccessIterator<A>::difference_type
-        operator-(const vector::template RandomAccessIterator<A>& a,
-                    const vector::template RandomAccessIterator<B>& b)
-        { return &(*a) - &(*b); }
-
-        template<typename A, typename B>
-        friend bool operator==(const vector::template RandomAccessIterator<A>& a,
-                                const vector::template RandomAccessIterator<B>& b)
-        { return &(*a) == &(*b); }
-
-        template<typename A, typename B>
-        friend bool operator!=(const typename vector::template RandomAccessIterator<A>& a,
-                                const typename vector::template RandomAccessIterator<B>& b)
-        { return &(*a) != &(*b); }
-        
-        template<typename A, typename B>
-        friend bool operator>(const typename vector::template RandomAccessIterator<A>& a,
-                                const typename vector::template RandomAccessIterator<B>& b)
-        { return &(*a) > &(*b); }
-        
-        template<typename A, typename B>
-        friend bool operator<(const typename vector::template RandomAccessIterator<A>& a,
-                                const typename vector::template RandomAccessIterator<B>& b)
-        { return &(*a) < &(*b); }
-        
-        template<typename A, typename B>
-        friend bool operator>=(const typename vector::template RandomAccessIterator<A>& a,
-                                const typename vector::template RandomAccessIterator<B>& b)
-        { return &(*a) >= &(*b); }
-        
-        template<typename A, typename B>
-        friend bool operator<=(const typename vector::template RandomAccessIterator<A>& a,
-                                const typename vector::template RandomAccessIterator<B>& b)
-        { return &(*a) <= &(*b); }
+            friend RandomAccessIterator operator+(int it, const RandomAccessIterator& x)
+                { return x.get_pointer() + it; }
+        }; // RandomAccessIterator
 
     public:
-        typedef T                                               value_type;
-        typedef Alloc                                           allocator_type;
-        typedef typename allocator_type::reference              reference;
-        typedef typename allocator_type::const_reference        const_reference;
-        typedef typename allocator_type::pointer                pointer;
-        typedef typename allocator_type::const_pointer          const_pointer;
-        typedef RandomAccessIterator<value_type>                iterator;
-        typedef RandomAccessIterator<const value_type>          const_iterator;
-        typedef reverse_iterator<const_iterator>                const_reverse_iterator;
-        typedef reverse_iterator<iterator>                      reverse_iterator;
-        typedef std::ptrdiff_t                                  difference_type;
-        typedef std::size_t                                     size_type;
+        typedef T                                                       value_type;
+        typedef Alloc                                                   allocator_type;
+        typedef typename allocator_type::reference                      reference;
+        typedef typename allocator_type::const_reference                const_reference;
+        typedef typename allocator_type::pointer                        pointer;
+        typedef typename allocator_type::const_pointer                  const_pointer;
+        typedef RandomAccessIterator<false>                             iterator;
+        typedef RandomAccessIterator<true>                              const_iterator;
+        typedef reverse_iterator<const_iterator>                        const_reverse_iterator;
+        typedef reverse_iterator<iterator>                              reverse_iterator;
+        typedef typename RandomAccessIterator<false>::difference_type   difference_type;
+        typedef typename RandomAccessIterator<false>::size_type         size_type;
 
     private:
         size_type       m_s;
@@ -148,8 +109,7 @@ namespace ft
         pointer         m_p;
 
     public:
-        explicit vector(const allocator_type& alloc = allocator_type())
-            : m_s(0), m_c(0), m_a(alloc), m_p(nullptr) {}
+        explicit vector(const allocator_type& alloc = allocator_type()) : m_s(0), m_c(0), m_a(alloc), m_p(nullptr) {}
         explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
             : m_s(n), m_c(n), m_a(alloc)
         {
@@ -159,8 +119,8 @@ namespace ft
         }
 
         template <class InputIterator>
-        vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
-                typename enable_if<!is_integral<InputIterator>::value>::type* = 0) : m_c(0), m_a(alloc)
+        vector(InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(),
+                typename enable_if<!is_same<InputIterator, int>::value>::type* = 0) : m_c(0), m_a(alloc)
         {
             for (InputIterator i = first; i != last; i++)
                 m_c++;
@@ -170,8 +130,7 @@ namespace ft
                 m_a.construct(m_p + i, *first++);
         }
 
-        vector (const vector& x) : m_s(0), m_c(0)
-        { *this = x; }
+        vector(const vector& x) : m_s(0), m_c(0) { *this = x; }
 
         vector& operator=(const vector& x)
         {
@@ -180,7 +139,7 @@ namespace ft
             for (size_type i = 0; i < m_s; i++)
                 m_a.destroy(m_p + i);
             this->m_s = x.m_s;
-            if (m_c < m_s)
+            if (m_c < x.m_s)
             {
                 if (m_c != 0)
                     m_a.deallocate(m_p, m_c);
@@ -220,22 +179,22 @@ namespace ft
         const_reverse_iterator crbegin() const { return const_reverse_iterator(m_p + m_s); }
         const_reverse_iterator crend() const { return const_reverse_iterator(m_p); }
 
-        reference at (size_type n) // ok
+        reference at(size_type n)
         {
             if (n >= m_s)
-                throw std::out_of_range("vector out of range");
+                throw std::out_of_range("vector");
             return (*(m_p + n));
         }
 
-        const_reference at (size_type n) const 
+        const_reference at(size_type n) const 
         {
             if (n >= m_s)
-                throw std::out_of_range("vector out of range");
+                throw std::out_of_range("vector");
             return (*(m_p + n));
         }
 
-        reference operator[] (size_type n) { return this->at(n); }
-        const_reference operator[] (size_type n) const { return this->at(n); }
+        reference operator[](size_type n) { return this->at(n); }
+        const_reference operator[](size_type n) const { return this->at(n); }
         reference front() { return (*m_p); }
         const_reference front() const { return (*m_p); }
         reference back() { return (*(m_p + m_s - 1)); }
@@ -245,9 +204,9 @@ namespace ft
         allocator_type get_allocator() const { return this->m_a; }
 
 
-        iterator erase (iterator position)
+        iterator erase(iterator position)
         {
-            size_type n = static_cast<size_type>(std::distance(begin(), position));
+            size_type n = position - this->begin();
 
             for (size_type i = n; i < m_s - 1; ++i)
             {
@@ -259,13 +218,14 @@ namespace ft
             return iterator(m_p + n);
         }
         
-        iterator erase (iterator first, iterator last)
+        iterator erase(iterator first, iterator last)
         {
-            difference_type d1 = std::distance(begin(), first);
-            difference_type d2 = std::distance(last, end());
+            size_type d1 = first - this->begin();
+            size_type d2 = this->end() - last;
 
             for (; first != last; first++)
                 m_a.destroy(&(*first));
+                
             size_type i = d1;
             while(last < end())
             {
@@ -281,7 +241,7 @@ namespace ft
             return (last == end()) ? end() : iterator(m_p + d1);
         }
 
-        void swap (vector& x)
+        void swap(vector& x)
         {
             ft::swap(m_p, x.m_p);
             ft::swap(m_s, x.m_s);
@@ -296,7 +256,7 @@ namespace ft
             m_s = 0;
         }
 
-        void resize (size_type n, value_type val = value_type()) //ok
+        void resize(size_type n, value_type val = value_type())
         {
             this->reserve(n);
             if (n < this->m_s)
@@ -312,12 +272,14 @@ namespace ft
             m_s = n;
         }
         
-        void reserve (size_type n)
+        void reserve(size_type n)
         {
             if (n > max_size())
                 throw std::length_error("vector");
+
             else if (n < this->capacity())
                 return ;
+
             pointer vec = m_a.allocate(n);
             for (size_type i = 0; i < m_s; i++)
                 m_a.construct(vec + i, *(m_p + i));
@@ -330,11 +292,12 @@ namespace ft
         }
 
         template <typename InputIterator>
-        void assign (InputIterator first, InputIterator last,
-                    typename enable_if<!is_integral<InputIterator>::value>::type* = 0) // don't work
+        void assign(InputIterator first, InputIterator last,
+                    typename enable_if<!is_integral<InputIterator>::value>::type* = 0)
         {
             clear();
             difference_type len = 0;
+
             for (InputIterator i = first; i != last; i++)
                 len++;
             if (len > static_cast<difference_type>(capacity()))
@@ -353,7 +316,7 @@ namespace ft
             m_s = len;
         }
 	
-        void assign (size_type n, const value_type& val) //ok
+        void assign(size_type n, const value_type& val)
         {
             clear();
             if (n > m_c)
@@ -367,7 +330,7 @@ namespace ft
             m_s = n;
         }
      
-        void push_back (const value_type& val) //ok
+        void push_back(const value_type& val)
         {
             if (m_s == m_c)
                 reserve(m_c == 0 ? 1 : m_c * 2);
@@ -383,10 +346,11 @@ namespace ft
             m_s--;
         }
   
-        iterator insert (iterator position, const value_type& val)
+        iterator insert(iterator position, const value_type& val)
         {
             if (position < this->begin() || position > this->end()) 
-                throw std::logic_error("vector: undefined behavior");
+                throw std::logic_error("vector");
+
             difference_type	n = position - this->begin();
 			this->reserve(m_s + 1);
 			position = this->begin() + n;
@@ -403,14 +367,16 @@ namespace ft
 			return position;
         }
 
-        void insert (iterator position, size_type n, const value_type& val)
+        void insert(iterator position, size_type n, const value_type& val)
         {
             if (position < this->begin() || position > this->end()) 
-                throw std::logic_error("vector: undefined behavior");
+                throw std::logic_error("vector");
+
             if (n == 0)
                 return ;
             else if (max_size() - m_s < n)
-                throw std::length_error("vector: undefined behavior");
+                throw std::length_error("vector");
+
             difference_type	len = position - this->begin();
 			this->reserve(m_s + n);
 			position = this->begin() + len;
@@ -431,14 +397,16 @@ namespace ft
         }
 
         template <typename InputIterator>
-        void insert (iterator position, typename enable_if<!is_integral<InputIterator>::value,
+        void insert(iterator position, typename enable_if<!is_integral<InputIterator>::value,
                         InputIterator>::type first, InputIterator last)
         {
             if (position < begin() || position > end())
-                throw std::logic_error("vector: undefined behavior");
+                throw std::logic_error("vector");
+
             size_type count = 0;
             for (InputIterator it = first; it != last; it++)
                 count++;
+
             difference_type	n = position - this->begin();
             this->reserve(m_s + count);
             position = this->begin() + n;
@@ -457,10 +425,10 @@ namespace ft
                 position++;
             }
         }
-    }; // class vector
+    }; //vector
 
     template <class X, class A>
-    bool operator== (const vector<X,A>& lhs, const vector<X,A>& rhs)
+    bool operator==(const vector<X,A>& lhs, const vector<X,A>& rhs)
     {
         if (lhs.size() != rhs.size())
             return false;
@@ -472,7 +440,7 @@ namespace ft
     { return (!(lhs == rhs)); }
 
     template <class X, class A>
-    bool operator< (const vector<X,A>& lhs, const vector<X,A>& rhs)
+    bool operator<(const vector<X,A>& lhs, const vector<X,A>& rhs)
     { return ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()); }
 
     template <class X, class A>
@@ -480,16 +448,15 @@ namespace ft
     { return !(rhs < lhs); }
 
     template <class X, class A>
-    bool operator> (const vector<X,A>& lhs, const vector<X,A>& rhs)
+    bool operator>(const vector<X,A>& lhs, const vector<X,A>& rhs)
     { return rhs < lhs; } 
 
     template <class X, class A>
     bool operator>=(const vector<X,A>& lhs, const vector<X,A>& rhs)
     { return !(lhs < rhs); }
     
-
     template <class T, class Alloc>
-    void swap (vector<T, Alloc>& x, vector<T, Alloc>& y) { x.swap(y); }
+    void swap(vector<T, Alloc>& x, vector<T, Alloc>& y) { x.swap(y); }
 
 } // namespace ft
 
